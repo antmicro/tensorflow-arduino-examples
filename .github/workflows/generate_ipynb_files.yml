@@ -1,0 +1,47 @@
+name: Generate ipynb files
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - 'notebooks/**/**.py'
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    env:
+      GH_SERVICE_ACCOUNT_NAME: "tflite-bot"
+      GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
+      GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          path: main
+
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install jupytext
+
+      - name: Generate ipynb
+        run: |
+          jupytext --to ipynb main/notebooks/**/**.py
+
+      - name: Configure git
+        run: |
+          git config --global user.name $GH_SERVICE_ACCOUNT_NAME
+          git config --global user.email $GH_SERVICE_ACCOUNT_EMAIL
+
+      - name: Commit and push
+        run: |
+          cd main
+          git add .
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Generate ipynb files";
+            git push -u https://$GH_SERVICE_ACCOUNT_NAME:$GH_SERVICE_ACCOUNT_TOKEN@github.com/antmicro/tensorflow-arduino-examples.git master
+          else
+            echo "no changes";
+          fi
