@@ -1,4 +1,4 @@
-## TensorFlow Lite Micro Google examples
+## TensorFlow Lite Micro examples
 
 This repository, developed in collaboration between Antmicro and Google's TF Lite Micro team, is a work in progress but is ultimately meant to contain sources, tests, Google colabs and other material which use TF Lite Micro and Renode to enable easily running TF Lite Micro demos.
 
