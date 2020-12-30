@@ -1,0 +1,56 @@
+name: Arduino examples tests
+on:
+  push:
+  pull_request:
+    paths:
+      - 'tensorflow'
+      - 'tests'
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          path: main
+
+      - name: Install arduino-cli
+        run: |
+          sudo curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+          bin/arduino-cli core install arduino:mbed
+          bin/arduino-cli lib install JPEGDecoder@1.8.0
+          git clone --quiet https://github.com/ArduCAM/Arduino.git
+          cp -r Arduino/ArduCAM ~/Arduino/libraries
+          cp -r main/tensorflow ~/Arduino/libraries
+          sed -i'' '/#define DEBUG_SERIAL_OBJECT/s/(Serial)/(Serial1)/' ~/Arduino/libraries/tensorflow/src/tensorflow/lite/micro/arduino/debug_log.cpp
+           > ~/Arduino/libraries/JPEGDecoder/src/User_Config.h
+
+      - name: Compile binaries
+        run: bin/arduino-cli compile -b arduino:mbed:nano33ble --output-dir main/tests/binaries main/tensorflow/examples/person_detection
+
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+
+      - name: Set Up Renode
+        run: |
+          wget https://dl.antmicro.com/projects/renode/builds/renode-latest.deb
+          sudo apt install -y ./renode-latest.deb
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install robotframework==3.1 psutil pyyaml requests
+
+      - name: Test
+        run: renode-test main/tests/**.robot
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: robot-output
+          path: |
+            report.html
+            log.html
+            robot_output.xml
+      
