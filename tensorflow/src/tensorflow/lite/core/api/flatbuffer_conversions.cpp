@@ -217,6 +217,10 @@ TfLiteStatus ParseOpDataTfLite(const Operator* op, BuiltinOperator op_type,
       return ParseFloor(op, error_reporter, allocator, builtin_data);
     }
 
+    case BuiltinOperator_FLOOR_DIV: {
+      return ParseFloorDiv(op, error_reporter, allocator, builtin_data);
+    }
+
     case BuiltinOperator_FULLY_CONNECTED: {
       return ParseFullyConnected(op, error_reporter, allocator, builtin_data);
     }
@@ -408,6 +412,10 @@ TfLiteStatus ParseOpDataTfLite(const Operator* op, BuiltinOperator op_type,
 
     case BuiltinOperator_TANH: {
       return ParseTanh(op, error_reporter, allocator, builtin_data);
+    }
+
+    case BuiltinOperator_TRANSPOSE_CONV: {
+      return ParseTransposeConv(op, error_reporter, allocator, builtin_data);
     }
 
     case BuiltinOperator_UNPACK: {
@@ -636,18 +644,6 @@ TfLiteStatus ParseOpDataTfLite(const Operator* op, BuiltinOperator op_type,
       *builtin_data = params.release();
       return kTfLiteOk;
     }
-    case BuiltinOperator_TRANSPOSE_CONV: {
-      auto params = safe_allocator.Allocate<TfLiteTransposeConvParams>();
-      TF_LITE_ENSURE(error_reporter, params != nullptr);
-      if (const auto* transpose_conv_params =
-              op->builtin_options_as_TransposeConvOptions()) {
-        params->padding = ConvertPadding(transpose_conv_params->padding());
-        params->stride_width = transpose_conv_params->stride_w();
-        params->stride_height = transpose_conv_params->stride_h();
-      }
-      *builtin_data = params.release();
-      return kTfLiteOk;
-    }
     case BuiltinOperator_SPARSE_TO_DENSE: {
       auto params = safe_allocator.Allocate<TfLiteSparseToDenseParams>();
       TF_LITE_ENSURE(error_reporter, params != nullptr);
@@ -810,7 +806,6 @@ TfLiteStatus ParseOpDataTfLite(const Operator* op, BuiltinOperator op_type,
     case BuiltinOperator_TOPK_V2:
     case BuiltinOperator_TRANSPOSE:
     case BuiltinOperator_POW:
-    case BuiltinOperator_FLOOR_DIV:
     case BuiltinOperator_ZEROS_LIKE:
     case BuiltinOperator_FLOOR_MOD:
     case BuiltinOperator_RANGE:
@@ -1133,6 +1128,14 @@ TfLiteStatus ParseFill(const Operator*, ErrorReporter*, BuiltinDataAllocator*,
 // selective registration for the OpResolver implementation in micro.
 TfLiteStatus ParseFloor(const Operator*, ErrorReporter*, BuiltinDataAllocator*,
                         void**) {
+  return kTfLiteOk;
+}
+
+// We have this parse function instead of directly returning kTfLiteOk from the
+// switch-case in ParseOpData because this function is used as part of the
+// selective registration for the OpResolver implementation in micro.
+TfLiteStatus ParseFloorDiv(const Operator*, ErrorReporter*,
+                           BuiltinDataAllocator*, void**) {
   return kTfLiteOk;
 }
 
@@ -1789,6 +1792,32 @@ TfLiteStatus ParseSvdf(const Operator* op, ErrorReporter* error_reporter,
 // selective registration for the OpResolver implementation in micro.
 TfLiteStatus ParseTanh(const Operator*, ErrorReporter*, BuiltinDataAllocator*,
                        void**) {
+  return kTfLiteOk;
+}
+
+TfLiteStatus ParseTransposeConv(const Operator* op,
+                                ErrorReporter* error_reporter,
+                                BuiltinDataAllocator* allocator,
+                                void** builtin_data) {
+  CheckParsePointerParams(op, error_reporter, allocator, builtin_data);
+
+  SafeBuiltinDataAllocator safe_allocator(allocator);
+  std::unique_ptr<TfLiteTransposeConvParams,
+                  SafeBuiltinDataAllocator::BuiltinDataDeleter>
+      params = safe_allocator.Allocate<TfLiteTransposeConvParams>();
+  TF_LITE_ENSURE(error_reporter, params != nullptr);
+  const TransposeConvOptions* transpose_conv_params =
+      op->builtin_options_as_TransposeConvOptions();
+  if (transpose_conv_params != nullptr) {
+    params->padding = ConvertPadding(transpose_conv_params->padding());
+    params->stride_width = transpose_conv_params->stride_w();
+    params->stride_height = transpose_conv_params->stride_h();
+  } else {
+    // TODO(b/157480169): We should either return kTfLiteError or fill in some
+    // reasonable defaults in the params struct. We are not doing so until we
+    // better undertand the ramifications of changing the legacy behavior.
+  }
+  *builtin_data = params.release();
   return kTfLiteOk;
 }
 
