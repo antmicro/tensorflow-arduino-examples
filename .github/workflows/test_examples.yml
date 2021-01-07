@@ -4,8 +4,8 @@ on:
   pull_request:
     paths:
       - 'tensorflow'
-      - 'tests'
-      - 'build_binaries.sh'
+      - 'examples/*/*.robot'
+      - 'examples/*/build.sh'
 
 jobs:
   test:
@@ -23,9 +23,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Build binaries
-        run: ./build_binaries.sh
-
       - name: Set Up Python
         uses: actions/setup-python@v2
 
@@ -39,25 +36,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install robotframework==3.1 psutil pyyaml requests
 
-      - name: Test
+      - name: Test person-detection
         run: |
-          cp -r binaries tests
-          renode-test tests/**.robot
+          cd examples/person-detection
+          ./build.sh
+          renode-test *.robot
 
-      - name: Upload artifacts
+      - name: Upload person-detection artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: robot-output
+          name: person_detection_artifacts
           path: |
-            report.html
-            log.html
-            robot_output.xml
+            examples/person-detection/report.html
+            examples/person-detection/log.html
+            examples/person-detection/robot_output.xml
 
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           git clone https://github.com/antmicro/tensorflow-arduino-examples-binaries.git
-          cp -r binaries/person_detection tensorflow-arduino-examples-binaries
+          cp -r **/binaries/* tensorflow-arduino-examples-binaries
           cd tensorflow-arduino-examples-binaries
           git add .
           if [ -n "$(git status --porcelain)" ]; then
