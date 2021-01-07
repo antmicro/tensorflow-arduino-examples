@@ -5,29 +5,26 @@ on:
     paths:
       - 'tensorflow'
       - 'tests'
+      - 'build_binaries.sh'
 
 jobs:
   test:
     runs-on: ubuntu-18.04
+    env:
+      GH_SERVICE_ACCOUNT_NAME: "tflite-bot"
+      GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
+      GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
     steps:
+      - name: Configure git
+        run: |
+          git config --global user.name $GH_SERVICE_ACCOUNT_NAME
+          git config --global user.email $GH_SERVICE_ACCOUNT_EMAIL
+        
       - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          path: main
 
-      - name: Install arduino-cli
-        run: |
-          sudo curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
-          bin/arduino-cli core install arduino:mbed
-          bin/arduino-cli lib install JPEGDecoder@1.8.0
-          git clone --quiet https://github.com/ArduCAM/Arduino.git
-          cp -r Arduino/ArduCAM ~/Arduino/libraries
-          cp -r main/tensorflow ~/Arduino/libraries
-          sed -i'' '/#define DEBUG_SERIAL_OBJECT/s/(Serial)/(Serial1)/' ~/Arduino/libraries/tensorflow/src/tensorflow/lite/micro/arduino/debug_log.cpp
-           > ~/Arduino/libraries/JPEGDecoder/src/User_Config.h
-
-      - name: Compile binaries
-        run: bin/arduino-cli compile -b arduino:mbed:nano33ble --output-dir main/tests/binaries main/tensorflow/examples/person_detection
+      - name: Build binaries
+        run: ./build_binaries.sh
 
       - name: Set Up Python
         uses: actions/setup-python@v2
@@ -43,7 +40,9 @@ jobs:
           pip install robotframework==3.1 psutil pyyaml requests
 
       - name: Test
-        run: renode-test main/tests/**.robot
+        run: |
+          cp -r binaries tests
+          renode-test tests/**.robot
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -53,4 +52,17 @@ jobs:
             report.html
             log.html
             robot_output.xml
-      
+
+      - name: Upload binaries
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          git clone https://github.com/antmicro/tensorflow-arduino-examples-binaries.git
+          cp -r binaries/person_detection tensorflow-arduino-examples-binaries
+          cd tensorflow-arduino-examples-binaries
+          git add .
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Upload binaries";
+            git push -u https://$GH_SERVICE_ACCOUNT_NAME:$GH_SERVICE_ACCOUNT_TOKEN@github.com/antmicro/tensorflow-arduino-examples-binaries.git master
+          else
+            echo "no changes";
+          fi

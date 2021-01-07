@@ -14,24 +14,13 @@
 !git clone --quiet https://github.com/antmicro/renode-tflite-nrf52840-person-detection.git
 !mkdir -p renode && cd renode && tar -xzf ../renode-tflite-nrf52840-person-detection/renode-1.11.0.linux-portable.tar.gz --strip 1
 !pip install -q -r renode/tests/requirements.txt
-!cd .. && curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
-
-!arduino-cli core install arduino:mbed
-!arduino-cli lib install JPEGDecoder@1.8.0
-!git clone --quiet https://github.com/ArduCAM/Arduino.git && cp -r Arduino/ArduCAM /root/Arduino/libraries
-!git clone --quiet https://github.com/antmicro/tensorflow-arduino-examples.git && cp -r tensorflow-arduino-examples/tensorflow /root/Arduino/libraries
 
 import os
 from renode_colab_tools import *
 os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
 
-# %% [markdown]
-"""## Compile binary"""
-
 # %%
-!sed -i'' '/#define DEBUG_SERIAL_OBJECT/s/(Serial)/(Serial1)/' /root/Arduino/libraries/tensorflow/src/tensorflow/lite/micro/arduino/debug_log.cpp
-! > /root/Arduino/libraries/JPEGDecoder/src/User_Config.h
-!arduino-cli compile -b arduino:mbed:nano33ble --output-dir /content/binaries /content/tensorflow-arduino-examples/tensorflow/examples/person_detection/
+!mkdir -p binaries/person_detection && cd binaries/person_detection && wget https://github.com/antmicro/tensorflow-arduino-examples-binaries/raw/master/person_detection/person_detection.ino.elf # fetch prebuilt binaries
 
 # %% [markdown]
 """## Take a photo"""
@@ -61,7 +50,7 @@ connect_renode() # this sets up a log file, and clears the simulation (just in c
 tell_renode('using sysbus')
 tell_renode('mach create')
 tell_renode('machine LoadPlatformDescription @/content/renode-tflite-nrf52840-person-detection/nrf52840.repl')
-tell_renode('sysbus LoadELF @/content/binaries/person_detection.ino.elf')
+tell_renode('sysbus LoadELF @/content/binaries/person_detection/person_detection.ino.elf')
 
 tell_renode('uart0 CreateFileBackend @uart.dump true')
 tell_renode('logLevel 3')

@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          path: main
 
       - name: Set Up Python
         uses: actions/setup-python@v2
@@ -27,8 +25,12 @@ jobs:
           pip install jupytext
 
       - name: Generate ipynb
+        # we want the script logic to be included in the resulting ipynb to avoid downloading build_binaries.sh in notebook execution
         run: |
-          jupytext --to ipynb main/notebooks/**/**.py
+          for f in notebooks/**/*.py; do cp "$f" "${f%.py}_build_binary.py"; done
+          sed -i 's/^/!/' build_binaries.sh
+          sed -i $'/fetch prebuilt binaries/{r build_binaries.sh\n d}' notebooks/**/*_build_binary.py
+          jupytext --to ipynb notebooks/**/**.py
 
       - name: Configure git
         run: |
@@ -37,8 +39,7 @@ jobs:
 
       - name: Commit and push
         run: |
-          cd main
-          git add .
+          git add notebooks/**/*.ipynb
           if [ -n "$(git status --porcelain)" ]; then
             git commit -m "Generate ipynb files";
             git push -u https://$GH_SERVICE_ACCOUNT_NAME:$GH_SERVICE_ACCOUNT_TOKEN@github.com/antmicro/tensorflow-arduino-examples.git master

@@ -28,7 +28,7 @@ Run Test
     Execute Command                 Clear
     Execute Command                 mach create
     Execute Command                 machine LoadPlatformDescription @platforms/boards/arduino_nano_33_ble.repl
-    Execute Command                 sysbus LoadELF @${CURDIR}/binaries/person_detection.ino.elf
+    Execute Command                 sysbus LoadELF @${CURDIR}/binaries/person_detection/person_detection.ino.elf
 
     Create Terminal Tester          sysbus.uart0
     Execute Command                 sysbus.spi2.camera ImageSource @${image}
