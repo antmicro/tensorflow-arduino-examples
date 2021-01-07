@@ -32,6 +32,7 @@ Run Test
 
     Create Terminal Tester          sysbus.uart0
     Execute Command                 sysbus.spi2.camera ImageSource @${image}
+    Execute Command                 machine EnableProfiler "${CURDIR}/person_detection.dump"
     Start Emulation
 
 Detect Template
