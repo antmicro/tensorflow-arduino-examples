@@ -50,6 +50,7 @@ jobs:
             examples/person-detection/report.html
             examples/person-detection/log.html
             examples/person-detection/robot_output.xml
+            examples/person-detection/person_detection.dump
 
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
