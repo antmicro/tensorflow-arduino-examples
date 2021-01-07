@@ -66,9 +66,10 @@ tell_renode('sysbus LoadELF @/content/binaries/person_detection.ino.elf')
 tell_renode('uart0 CreateFileBackend @uart.dump true')
 tell_renode('logLevel 3')
 tell_renode('spi2.camera ImageSource @/content/photo.jpg')
+tell_renode('machine EnableProfiler "metrics.dump"')
 tell_renode('s')
 time.sleep(5) #waits for creating uart.dump
-!timeout 60 tail -f renode/uart.dump #it takes a few minutes to get the person score
+!timeout 60 tail -f renode/uart.dump | sed '/^Person score: .*$/ q'
 tell_renode('q')
 expect_cli('Renode is quitting')
 shutdown_renode()
@@ -78,7 +79,6 @@ shutdown_renode()
 
 # %%
 from renode.tools.metrics_analyzer.metrics_parser import MetricsParser
-!renode/test.sh renode-tflite-nrf52840-person-detection/arducam.robot
 init_notebook_mode(connected=False)
 parser = MetricsParser('renode/metrics.dump')
 
