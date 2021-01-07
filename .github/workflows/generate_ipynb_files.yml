@@ -3,7 +3,7 @@ on:
   push:
     branches: [ master ]
     paths:
-    - 'notebooks/**/**.py'
+    - 'examples/*/*.py'
 
 jobs:
   build:
@@ -24,13 +24,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install jupytext
 
-      - name: Generate ipynb
+      - name: Generate person-detection ipynb
         # we want the script logic to be included in the resulting ipynb to avoid downloading build_binaries.sh in notebook execution
         run: |
-          for f in notebooks/**/*.py; do cp "$f" "${f%.py}_build_binary.py"; done
-          sed -i 's/^/!/' build_binaries.sh
-          sed -i $'/fetch prebuilt binaries/{r build_binaries.sh\n d}' notebooks/**/*_build_binary.py
-          jupytext --to ipynb notebooks/**/**.py
+          cd examples/person-detection
+          cp person_detection.py person_detection_build_binary.py
+          sed -i 's/^/!/' build.sh
+          sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' person_detection_build_binary.py
+          jupytext --to ipynb person_detection.py person_detection_build_binary.py
 
       - name: Configure git
         run: |
@@ -39,7 +40,7 @@ jobs:
 
       - name: Commit and push
         run: |
-          git add notebooks/**/*.ipynb
+          git add examples/*/*.ipynb
           if [ -n "$(git status --porcelain)" ]; then
             git commit -m "Generate ipynb files";
             git push -u https://$GH_SERVICE_ACCOUNT_NAME:$GH_SERVICE_ACCOUNT_TOKEN@github.com/antmicro/tensorflow-arduino-examples.git master
