@@ -1,6 +1,10 @@
 name: Arduino examples tests
 on:
   push:
+    paths:
+      - 'tensorflow'
+      - 'examples/*/*.robot'
+      - 'examples/*/build.sh'
   pull_request:
     paths:
       - 'tensorflow'
