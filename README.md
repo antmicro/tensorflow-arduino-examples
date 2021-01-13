@@ -8,5 +8,6 @@ This repository, developed in collaboration between Antmicro and Google's TF Lit
   * `generate_ipynb_files.yml` - generating `ipynb` files from `py` sources
   * `test_examples.yml` - building and testing examples
 * `examples` - scripts, tests and colab files for specific TensorFlow Lite examples
+  * `magic-wand` - magic wand demo on Arduino Nano 33 BLE Sense [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/magic-wand/magic_wand.ipynb)
   * `person-detection` - person detection demo on Arduino Nano 33 BLE Sense [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/person-detection/person_detection.ipynb)
 * `tensorflow` - example sources and Arduino lib, generated from the TF repository by a dedicated GH action [stored in a separate repo](https://github.com/antmicro/tensorflow-examples-generator)

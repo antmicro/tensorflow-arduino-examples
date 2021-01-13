@@ -56,6 +56,22 @@ jobs:
             examples/person-detection/robot_output.xml
             examples/person-detection/person_detection.dump
 
+      - name: Test magic-wand
+        run: |
+          cd examples/magic-wand
+          ./build.sh
+          renode-test *.robot
+
+      - name: Upload magic-wand artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: magic_wand_artifacts
+          path: |
+            examples/magic-wand/report.html
+            examples/magic-wand/log.html
+            examples/magic-wand/robot_output.xml
+            examples/magic-wand/*.dump
+
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
