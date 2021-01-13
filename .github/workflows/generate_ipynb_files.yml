@@ -4,6 +4,7 @@ on:
     branches: [ master ]
     paths:
     - 'examples/*/*.py'
+    - 'examples/*/build.sh'
 
 jobs:
   build:
