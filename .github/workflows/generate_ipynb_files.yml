@@ -25,13 +25,21 @@ jobs:
           pip install jupytext
 
       - name: Generate person-detection ipynb
-        # we want the script logic to be included in the resulting ipynb to avoid downloading build_binaries.sh in notebook execution
+        # we want the script logic to be included in the resulting ipynb to avoid downloading build.sh in notebook execution
         run: |
           cd examples/person-detection
           cp person_detection.py person_detection_build_binary.py
           sed -i 's/^/!/' build.sh
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' person_detection_build_binary.py
           jupytext --to ipynb person_detection.py person_detection_build_binary.py
+
+      - name: Generate magic-wand ipynb
+        run: |
+          cd examples/magic-wand
+          cp magic_wand.py magic_wand_build_binary.py
+          sed -i 's/^/!/' build.sh
+          sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' magic_wand_build_binary.py
+          jupytext --to ipynb magic_wand.py magic_wand_build_binary.py
 
       - name: Configure git
         run: |
