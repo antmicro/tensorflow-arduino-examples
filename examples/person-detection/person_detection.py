@@ -12,6 +12,7 @@
 !pip install -q git+https://github.com/antmicro/pyrenode.git git+https://github.com/antmicro/renode-colab-tools.git Pillow
 !mkdir -p renode && cd renode && wget https://dl.antmicro.com/projects/renode/builds/renode-latest.linux-portable.tar.gz && tar -xzf renode-latest.linux-portable.tar.gz --strip 1
 !pip install -q -r renode/tests/requirements.txt
+!wget -O default.jpg https://dl.antmicro.com/projects/renode/images/person_image_0.jpg-s_3853-7f2125e28423fa117a1079d84785b17c9b70f62d #download default photo
 
 import os
 from renode_colab_tools import image, metrics
@@ -21,21 +22,23 @@ os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
 !mkdir -p binaries/person_detection && cd binaries/person_detection && wget https://github.com/antmicro/tensorflow-arduino-examples-binaries/raw/master/person_detection/person_detection.ino.elf # fetch prebuilt binaries
 
 # %% [markdown]
-"""## Take a photo"""
+"""
+## Take a photo
+To change the selected option, rerun the cell
+# """
 
 # %%
-from IPython.display import Image
-photo = image.take_photo()
-display(Image(photo))
-
+image.image_options()
 # %% [markdown]
 """## Convert the photo, required size < 4096 bytes"""
 
 # %%
-from PIL import Image
-photo = Image.open('photo.jpg')
+from PIL import Image as pil
+from IPython.display import Image, display
+photo = pil.open('photo.jpg')
 photo.thumbnail((120, 120))
 photo.save('photo.jpg')
+display(Image('photo.jpg'))
 
 # %% [markdown]
 """## Run a person-detection example with a captured photo in Renode"""
