@@ -56,7 +56,7 @@ tell_renode('spi2.camera ImageSource @photo.jpg')
 tell_renode('machine EnableProfiler "metrics.dump"')
 tell_renode('s')
 time.sleep(5) #waits for creating uart.dump
-!timeout 60 tail -c+2 -f renode/uart.dump | sed '/^Person score: .*$/ q'
+!timeout 120 tail -c+2 -f renode/uart.dump | sed '/^Person score: .*$/ q'
 tell_renode('q')
 expect_cli('Renode is quitting')
 shutdown_renode()
