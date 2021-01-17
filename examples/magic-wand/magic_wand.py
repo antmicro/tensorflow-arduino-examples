@@ -10,7 +10,7 @@
 
 # %%
 !pip install -q git+https://github.com/antmicro/pyrenode.git git+https://github.com/antmicro/renode-colab-tools.git
-!mkdir -p renode && cd renode && wget http://dl.antmicro.com/projects/renode/builds/renode-1.11+colab.linux-portable.tar.gz &&  tar -xzf renode-1.11+colab.linux-portable.tar.gz --strip 1
+!mkdir -p renode && cd renode && wget https://dl.antmicro.com/projects/renode/builds/renode-latest.linux-portable.tar.gz && tar -xzf renode-latest.linux-portable.tar.gz --strip 1
 !pip install -q -r renode/tests/requirements.txt
 !git clone --quiet https://github.com/antmicro/tensorflow-arduino-examples.git
 
@@ -31,13 +31,13 @@ shutdown_renode()
 connect_renode() # this sets up a log file, and clears the simulation (just in case)
 tell_renode('using sysbus')
 tell_renode('mach create')
-tell_renode('machine LoadPlatformDescription @/content/renode/platforms/boards/arduino_nano_33_ble.repl')
-tell_renode('sysbus LoadELF @/content/binaries/magic_wand/magic_wand.ino.elf')
+tell_renode('machine LoadPlatformDescription @platforms/boards/arduino_nano_33_ble.repl')
+tell_renode('sysbus LoadELF @binaries/magic_wand/magic_wand.ino.elf')
 
 tell_renode('uart0 CreateFileBackend @uart.dump true')
 tell_renode('logLevel 3')
 tell_renode('machine EnableProfiler "metrics.dump"')
-tell_renode('sysbus.twi0.lsm9ds1_imu FeedAccelerationSample @/content/tensorflow-arduino-examples/examples/magic-wand/angle_rotated.data')
+tell_renode('sysbus.twi0.lsm9ds1_imu FeedAccelerationSample @tensorflow-arduino-examples/examples/magic-wand/angle_rotated.data')
 tell_renode('s')
 time.sleep(5) #waits for creating uart.dump
 !timeout 60 tail -c+2 -f renode/uart.dump | sed '/\* \* \* \* \* \* \* \*/ q'

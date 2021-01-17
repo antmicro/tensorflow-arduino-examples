@@ -10,9 +10,7 @@
 
 # %%
 !pip install -q git+https://github.com/antmicro/pyrenode.git git+https://github.com/antmicro/renode-colab-tools.git Pillow
-!rm -rf renode-tflite-nrf52840-person-detection renode
-!git clone --quiet https://github.com/antmicro/renode-tflite-nrf52840-person-detection.git
-!mkdir -p renode && cd renode && tar -xzf ../renode-tflite-nrf52840-person-detection/renode-1.11.0.linux-portable.tar.gz --strip 1
+!mkdir -p renode && cd renode && wget https://dl.antmicro.com/projects/renode/builds/renode-latest.linux-portable.tar.gz && tar -xzf renode-latest.linux-portable.tar.gz --strip 1
 !pip install -q -r renode/tests/requirements.txt
 
 import os
@@ -49,12 +47,12 @@ shutdown_renode()
 connect_renode() # this sets up a log file, and clears the simulation (just in case)
 tell_renode('using sysbus')
 tell_renode('mach create')
-tell_renode('machine LoadPlatformDescription @/content/renode-tflite-nrf52840-person-detection/nrf52840.repl')
-tell_renode('sysbus LoadELF @/content/binaries/person_detection/person_detection.ino.elf')
+tell_renode('machine LoadPlatformDescription @platforms/boards/arduino_nano_33_ble.repl')
+tell_renode('sysbus LoadELF @binaries/person_detection/person_detection.ino.elf')
 
 tell_renode('uart0 CreateFileBackend @uart.dump true')
 tell_renode('logLevel 3')
-tell_renode('spi2.camera ImageSource @/content/photo.jpg')
+tell_renode('spi2.camera ImageSource @photo.jpg')
 tell_renode('machine EnableProfiler "metrics.dump"')
 tell_renode('s')
 time.sleep(5) #waits for creating uart.dump
