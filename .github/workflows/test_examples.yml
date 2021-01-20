@@ -88,6 +88,22 @@ jobs:
             examples/hello-world/robot_output.xml
             examples/hello-world/*.dump
 
+      - name: Test micro-speech
+        run: |
+          cd examples/micro-speech
+          ./build.sh
+          renode-test *.robot
+
+      - name: Upload micro-speech artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: micro_speech_artifacts
+          path: |
+            examples/micro-speech/report.html
+            examples/micro-speech/log.html
+            examples/micro-speech/robot_output.xml
+            examples/micro-speech/*.dump
+
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
