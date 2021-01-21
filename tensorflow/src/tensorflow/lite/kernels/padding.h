@@ -18,6 +18,7 @@ limitations under the License.
 #include "tensorflow/lite/c/builtin_op_data.h"
 #include "tensorflow/lite/kernels/internal/types.h"
 
+// this is a bogus change
 namespace tflite {
 
 // TODO(renjieliu): Migrate others to use ComputePaddingWithLeftover.
