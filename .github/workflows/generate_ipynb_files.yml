@@ -49,6 +49,14 @@ jobs:
           sed -i 's/^/!/' build.sh
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' hello_world_build_binary.py
           jupytext --to ipynb hello_world.py hello_world_build_binary.py
+          
+      - name: Generate micro-speech ipynb
+        run: |
+          cd examples/micro-speech
+          cp micro_speech.py micro_speech_build_binary.py
+          sed -i 's/^/!/' build.sh
+          sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' micro_speech_build_binary.py
+          jupytext --to ipynb micro_speech.py micro_speech_build_binary.py
 
       - name: Configure git
         run: |
