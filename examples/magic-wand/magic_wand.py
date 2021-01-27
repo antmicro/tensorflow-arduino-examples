@@ -15,7 +15,7 @@
 !git clone --quiet https://github.com/antmicro/tensorflow-arduino-examples.git
 
 import os
-from renode_colab_tools import *
+from renode_colab_tools import metrics
 os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
 
 # %%
@@ -50,21 +50,21 @@ shutdown_renode()
 
 # %%
 from renode.tools.metrics_analyzer.metrics_parser import MetricsParser
-init_notebook_mode(connected=False)
+metrics.init_notebook_mode(connected=False)
 parser = MetricsParser('renode/metrics.dump')
 
 # %%
-configure_plotly_browser_state()
-show_executed_instructions(parser)
+metrics.configure_plotly_browser_state()
+metrics.show_executed_instructions(parser)
 
 # %%
-configure_plotly_browser_state()
-show_memory_access(parser)
+metrics.configure_plotly_browser_state()
+metrics.show_memory_access(parser)
 
 # %%
-configure_plotly_browser_state()
-show_exceptions(parser)
+metrics.configure_plotly_browser_state()
+metrics.show_exceptions(parser)
 
 # %%
-configure_plotly_browser_state()
-show_peripheral_access(parser)
+metrics.configure_plotly_browser_state()
+metrics.show_peripheral_access(parser)

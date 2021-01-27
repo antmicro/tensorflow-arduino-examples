@@ -14,7 +14,7 @@
 !pip install -q -r renode/tests/requirements.txt
 
 import os
-from renode_colab_tools import *
+from renode_colab_tools import image, metrics
 os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
 
 # %%
@@ -25,7 +25,7 @@ os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
 
 # %%
 from IPython.display import Image
-photo = take_photo()
+photo = image.take_photo()
 display(Image(photo))
 
 # %% [markdown]
@@ -33,9 +33,9 @@ display(Image(photo))
 
 # %%
 from PIL import Image
-image = Image.open('photo.jpg')
-image.thumbnail((120, 120))
-image.save('photo.jpg')
+photo = Image.open('photo.jpg')
+photo.thumbnail((120, 120))
+photo.save('photo.jpg')
 
 # %% [markdown]
 """## Run a person-detection example with a captured photo in Renode"""
@@ -66,17 +66,17 @@ shutdown_renode()
 
 # %%
 from renode.tools.metrics_analyzer.metrics_parser import MetricsParser
-init_notebook_mode(connected=False)
+metrics.init_notebook_mode(connected=False)
 parser = MetricsParser('renode/metrics.dump')
 
 # %%
-configure_plotly_browser_state()
-show_executed_instructions(parser)
+metrics.configure_plotly_browser_state()
+metrics.show_executed_instructions(parser)
 
 # %%
-configure_plotly_browser_state()
-show_memory_access(parser)
+metrics.configure_plotly_browser_state()
+metrics.show_memory_access(parser)
 
 # %%
-configure_plotly_browser_state()
-show_exceptions(parser)
+metrics.configure_plotly_browser_state()
+metrics.show_exceptions(parser)
