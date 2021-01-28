@@ -42,6 +42,14 @@ jobs:
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' magic_wand_build_binary.py
           jupytext --to ipynb magic_wand.py magic_wand_build_binary.py
 
+      - name: Generate hello-world ipynb
+        run: |
+          cd examples/hello-world
+          cp hello_world.py hello_world_build_binary.py
+          sed -i 's/^/!/' build.sh
+          sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' hello_world_build_binary.py
+          jupytext --to ipynb hello_world.py hello_world_build_binary.py
+
       - name: Configure git
         run: |
           git config --global user.name $GH_SERVICE_ACCOUNT_NAME
