@@ -72,6 +72,22 @@ jobs:
             examples/magic-wand/robot_output.xml
             examples/magic-wand/*.dump
 
+      - name: Test hello-world
+        run: |
+          cd examples/hello-world
+          ./build.sh
+          renode-test *.robot
+
+      - name: Upload hello-world artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: hello_world_artifacts
+          path: |
+            examples/magic-wand/report.html
+            examples/magic-wand/log.html
+            examples/magic-wand/robot_output.xml
+            examples/magic-wand/*.dump
+
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
