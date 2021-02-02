@@ -18,6 +18,7 @@ jobs:
       GH_SERVICE_ACCOUNT_NAME: "tflite-bot"
       GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
       GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
+      METRICS_VISUALIZER: renode/tools/metrics_analyzer/metrics_visualizer/metrics-visualizer.py
     steps:
       - name: Configure git
         run: |
@@ -41,12 +42,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r $GITHUB_WORKSPACE/renode/tests/requirements.txt
+          pip install -r $GITHUB_WORKSPACE/renode/tools/metrics_analyzer/metrics_visualizer/requirements.txt
 
       - name: Test person-detection
         run: |
           cd examples/person-detection
           ./build.sh
           $GITHUB_WORKSPACE/renode/test.sh *.robot
+          mkdir graphs
+          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER person_detection.dump --no-dialogs -o graphs
 
       - name: Upload person-detection artifacts
         uses: actions/upload-artifact@v2
@@ -57,12 +61,17 @@ jobs:
             examples/person-detection/log.html
             examples/person-detection/robot_output.xml
             examples/person-detection/person_detection.dump
+            examples/person-detection/graphs
 
       - name: Test magic-wand
         run: |
           cd examples/magic-wand
           ./build.sh
           $GITHUB_WORKSPACE/renode/test.sh *.robot
+          mkdir ring_graphs
+          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER magic_wand_ring.dump --no-dialogs -o ring_graphs
+          mkdir slope_graphs
+          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER magic_wand_slope.dump --no-dialogs -o slope_graphs
 
       - name: Upload magic-wand artifacts
         uses: actions/upload-artifact@v2
@@ -73,12 +82,16 @@ jobs:
             examples/magic-wand/log.html
             examples/magic-wand/robot_output.xml
             examples/magic-wand/*.dump
+            examples/person-detection/ring_graphs
+            examples/person-detection/slope_graphs
 
       - name: Test hello-world
         run: |
           cd examples/hello-world
           ./build.sh
           $GITHUB_WORKSPACE/renode/test.sh *.robot
+          mkdir graphs
+          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER hello_world.dump --no-dialogs -o graphs
 
       - name: Upload hello-world artifacts
         uses: actions/upload-artifact@v2
@@ -89,6 +102,7 @@ jobs:
             examples/hello-world/log.html
             examples/hello-world/robot_output.xml
             examples/hello-world/*.dump
+            examples/person-detection/graphs
 
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
