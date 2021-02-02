@@ -83,10 +83,10 @@ jobs:
         with:
           name: hello_world_artifacts
           path: |
-            examples/magic-wand/report.html
-            examples/magic-wand/log.html
-            examples/magic-wand/robot_output.xml
-            examples/magic-wand/*.dump
+            examples/hello-world/report.html
+            examples/hello-world/log.html
+            examples/hello-world/robot_output.xml
+            examples/hello-world/*.dump
 
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
