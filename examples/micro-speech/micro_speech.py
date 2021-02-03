@@ -65,7 +65,7 @@ metrics.init_notebook_mode(connected=False)
 parser = MetricsParser('renode/metrics.dump')
 
 # %%
-metrics.onfigure_plotly_browser_state()
+metrics.configure_plotly_browser_state()
 metrics.show_executed_instructions(parser)
 
 # %%
