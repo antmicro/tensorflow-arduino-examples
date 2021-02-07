@@ -108,7 +108,9 @@ jobs:
         run: |
           cd examples/micro-speech
           ./build.sh
-          renode-test *.robot
+          $GITHUB_WORKSPACE/renode/test.sh *.robot
+          mkdir graphs
+          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER micro_speech.dump --no-dialogs -o graphs
 
       - name: Upload micro-speech artifacts
         uses: actions/upload-artifact@v2
