@@ -12,7 +12,7 @@ test_script_path = f"{os.environ.get('GITHUB_WORKSPACE')}/renode/test.sh"
 inv_data_str = ""
 robot_name = glob("*.robot")[0].split(".")[0]
 
-with open(INVOCATION_DETAILS, 'r') as f:
+with open(INVOCATION_DATA_PATH, 'r') as f:
     inv_data_str = f.read()
 
 inv_data_lst = inv_data_str.split("--")
@@ -30,7 +30,7 @@ with open(tmp.name, 'w') as log:
     subprocess_args = [
             test_script_path, 
             "--listener",
-            os.path.join(this_path, f"results_listener.py:{inv_data_str}"
+            os.path.join(this_path, f"results_listener.py:{inv_data_str}")
                 ]
     subprocess_args.extend(sys.argv[1:])
 
@@ -49,7 +49,7 @@ with open(tmp.name, 'w') as log:
         if ret is not None:
             break
         if line:
-            log.write(f{'{line}\n')
+            log.write(f'{line}\n')
             print(line)
 
 
