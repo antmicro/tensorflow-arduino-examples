@@ -21,6 +21,9 @@ jobs:
       GH_SERVICE_ACCOUNT_NAME: "tflite-bot"
       GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
       GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
+      GOOGLE_APPLICATION_CREDENTIALS: "/tmp/google_sa.json"
+      GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+      DISTANT_RS_BUCKET: ${{ secrets.DISTANT_RS_BUCKET }}
       METRICS_VISUALIZER: renode/tools/metrics_analyzer/metrics_visualizer/metrics-visualizer.py
       TENSORFLOW_PATH: "${{ github.workspace }}/tensorflow"
     steps:
@@ -28,6 +31,11 @@ jobs:
         run: |
           git config --global user.name $GH_SERVICE_ACCOUNT_NAME
           git config --global user.email $GH_SERVICE_ACCOUNT_EMAIL
+
+      - name: Configure GCP token
+        run: 'echo "$GTOKEN" | base64 -d > $GOOGLE_APPLICATION_CREDENTIALS'
+        env:
+          GTOKEN: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
         
       - name: Checkout repository
         uses: actions/checkout@v2
