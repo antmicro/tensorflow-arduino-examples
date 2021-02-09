@@ -5,7 +5,7 @@ on:
       - 'tensorflow/**'
       - 'examples/*/*.robot'
       - 'examples/*/build.sh'
-      - '.github/workflows/test_examples.yml'
+      - '.github/**'
   pull_request:
     paths:
       - 'tensorflow/**'
@@ -57,11 +57,14 @@ jobs:
           pip install -r $GITHUB_WORKSPACE/renode/tools/metrics_analyzer/metrics_visualizer/requirements.txt
           pip install git+https://github.com/antmicro/distant-rs.git
 
+      - name: Open Invocation
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py open
+
       - name: Test person-detection
         run: |
           cd examples/person-detection
           ./build.sh
-          $GITHUB_WORKSPACE/renode/test.sh *.robot
+          $GITHUB_WORKSPACE/.scripts/test_and_publish.py *.robot
           mkdir graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER person_detection.dump --no-dialogs -o graphs
 
@@ -80,7 +83,7 @@ jobs:
         run: |
           cd examples/magic-wand
           ./build.sh
-          $GITHUB_WORKSPACE/renode/test.sh *.robot
+          $GITHUB_WORKSPACE/.scripts/test_and_publish.py *.robot
           mkdir ring_graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER magic_wand_ring.dump --no-dialogs -o ring_graphs
           mkdir slope_graphs
@@ -102,7 +105,7 @@ jobs:
         run: |
           cd examples/hello-world
           ./build.sh
-          $GITHUB_WORKSPACE/renode/test.sh *.robot
+          $GITHUB_WORKSPACE/.scripts/test_and_publish.py *.robot
           mkdir graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER hello_world.dump --no-dialogs -o graphs
 
@@ -121,7 +124,7 @@ jobs:
         run: |
           cd examples/micro-speech
           ./build.sh
-          $GITHUB_WORKSPACE/renode/test.sh *.robot
+          $GITHUB_WORKSPACE/.scripts/test_and_publish.py *.robot
           mkdir graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER micro_speech.dump --no-dialogs -o graphs
 
@@ -134,6 +137,9 @@ jobs:
             examples/micro-speech/log.html
             examples/micro-speech/robot_output.xml
             examples/micro-speech/*.dump
+
+      - name: Close Invocation
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 0
 
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -148,3 +154,4 @@ jobs:
           else
             echo "no changes";
           fi
+
