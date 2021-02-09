@@ -47,6 +47,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r $GITHUB_WORKSPACE/renode/tests/requirements.txt
           pip install -r $GITHUB_WORKSPACE/renode/tools/metrics_analyzer/metrics_visualizer/requirements.txt
+          pip install git+https://github.com/antmicro/distant-rs.git
 
       - name: Test person-detection
         run: |
