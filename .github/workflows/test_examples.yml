@@ -138,10 +138,16 @@ jobs:
             examples/micro-speech/robot_output.xml
             examples/micro-speech/*.dump
 
-      - name: Close Invocation
-        run: |
-          $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 0
-          $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py url
+      - name: Close Invocation (failed)
+        if: ${{ failure() || cancelled() }}
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 1
+
+      - name: Close Invocation (success)
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 0
+
+      - name: Print Invocation URL
+        if: ${{ always() }}
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py url
 
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
