@@ -25,7 +25,7 @@ os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
 """
 ## Take a photo
 To change the selected option, rerun the cell
-# """
+"""
 
 # %%
 image.image_options()
