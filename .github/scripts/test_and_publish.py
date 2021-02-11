@@ -2,6 +2,7 @@
 
 import subprocess, sys, os, tempfile
 from distantrs import Invocation
+from glob import glob
 
 INVOCATION_DATA_PATH = os.path.join(
         tempfile.gettempdir(),
@@ -59,16 +60,17 @@ with open(tmp.name, 'w') as log:
             print(line)
 
 
-expected_summary_paths = [
-        'nunit_output.xml',
+expected_artifact_paths = [
         'robot_output.xml',
         'log.html',
         'report.html',
         ]
+expected_artifact_paths.extend(glob('*.dump'))
+expected_artifact_paths.extend(glob('graphs/*.png'))
 
-existing_summary_paths = [x for x in expected_summary_paths if os.path.isfile(x)]
+existing_artifact_paths = [x for x in expected_artifact_paths if os.path.isfile(x)]
 
-for path in existing_summary_paths:
+for path in existing_artifact_paths:
     i.send_file_target(
         target_name=robot_name,
         file_name=os.path.basename(path),
