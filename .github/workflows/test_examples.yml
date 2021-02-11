@@ -75,7 +75,7 @@ jobs:
             examples/person-detection/log.html
             examples/person-detection/robot_output.xml
             examples/person-detection/person_detection.dump
-            examples/person-detection/graphs
+            examples/person-detection/*_graphs
 
       - name: Test magic-wand
         run: |
@@ -92,8 +92,7 @@ jobs:
             examples/magic-wand/log.html
             examples/magic-wand/robot_output.xml
             examples/magic-wand/*.dump
-            examples/person-detection/ring_graphs
-            examples/person-detection/slope_graphs
+            examples/magic-wand/*_graphs
 
       - name: Test hello-world
         run: |
@@ -110,7 +109,7 @@ jobs:
             examples/hello-world/log.html
             examples/hello-world/robot_output.xml
             examples/hello-world/*.dump
-            examples/person-detection/graphs
+            examples/hello-world/*_graphs
 
       - name: Test micro-speech
         run: |
@@ -127,6 +126,7 @@ jobs:
             examples/micro-speech/log.html
             examples/micro-speech/robot_output.xml
             examples/micro-speech/*.dump
+            examples/micro-speech/*_graphs
 
       - name: Close Invocation (failed)
         if: ${{ failure() || cancelled() }}
