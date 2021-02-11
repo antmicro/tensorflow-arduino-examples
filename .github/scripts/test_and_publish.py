@@ -67,6 +67,31 @@ i.add_log_to_target(
 
 dumps = glob('*.dump')
 
+expected_artifact_paths = [
+        'robot_output.xml',
+        'log.html',
+        'report.html',
+        ]
+expected_artifact_paths.extend(dumps)
+
+existing_artifact_paths = [x for x in expected_artifact_paths if os.path.isfile(x)]
+
+for path in existing_artifact_paths:
+    i.send_file_target(
+        target_name=robot_name,
+        file_name=os.path.basename(path),
+        file_path=path
+        )
+
+# If the tests failed, mark the target as failed and exit.
+if ret != 0:
+    i.finalize_target(
+        name=robot_name, 
+        success=not(ret)
+        )
+    sys.exit(ret)
+
+# Run the metrics analyzer for each dump file and upload it.
 for dump_file in dumps:
     dump_file_target = dump_file.split(".")[0]
 
@@ -95,26 +120,7 @@ for dump_file in dumps:
                     )
         
     
-expected_artifact_paths = [
-        'robot_output.xml',
-        'log.html',
-        'report.html',
-        ]
-expected_artifact_paths.extend(dumps)
-
-existing_artifact_paths = [x for x in expected_artifact_paths if os.path.isfile(x)]
-
-for path in existing_artifact_paths:
-    i.send_file_target(
-        target_name=robot_name,
-        file_name=os.path.basename(path),
-        file_path=path
-        )
-
-
 i.finalize_target(
     name=robot_name, 
     success=not(ret)
     )
-
-sys.exit(ret)
