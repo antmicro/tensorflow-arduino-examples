@@ -147,7 +147,7 @@ jobs:
 
       - name: Print Invocation URL
         if: ${{ always() }}
-        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py url
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py print_url
 
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'

@@ -58,7 +58,7 @@ def get_parser():
     close_i.add_argument("return_code", type=int)
     close_i.set_defaults(func=close_i_func)
 
-    url_i = subparsers.add_parser("url")
+    url_i = subparsers.add_parser("print_url")
     url_i.set_defaults(func=url_i_func)
 
     return parser
