@@ -9,6 +9,10 @@ logging.basicConfig(format="[%(asctime)s] %(levelname)-8s| %(message)s")
 
 l = logging.getLogger(__name__)
 
+def get_invocation_details():
+    with open(INVOCATION_DETAILS, 'r') as f:
+        return f.read().split("--")
+
 def open_i_func(arg):
     i = Invocation()
     i.open()
@@ -20,10 +24,8 @@ def open_i_func(arg):
         f.write(f'{i.invocation_id}--{i.auth_token}')
 
 def close_i_func(arg):
-    i_details = []
+    i_details = get_invocation_details()
     ret = 5 if arg.return_code == 0 else 6
-    with open(INVOCATION_DETAILS, 'r') as f:
-        i_details = f.read().split("--")
 
     if len(i_details) != 2:
         l.error(f"Invalid {INVOCATION_DETAILS}!")
@@ -41,10 +43,7 @@ def close_i_func(arg):
     i.close()
 
 def url_i_func(arg):
-    i_details = []
-    with open(INVOCATION_DETAILS, 'r') as f:
-        i_details = f.read().split("--")
-
+    i_details = get_invocation_details()
     print(f"https://source.cloud.google.com/results/invocations/{i_details[0]}")
 
 def get_parser():
