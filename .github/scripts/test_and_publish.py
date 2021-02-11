@@ -2,7 +2,6 @@
 
 import subprocess, sys, os, tempfile
 from distantrs import Invocation
-from glob import glob
 
 INVOCATION_DATA_PATH = '/tmp/distant-rs-invocation.txt'
 
@@ -10,7 +9,7 @@ INVOCATION_DATA_PATH = '/tmp/distant-rs-invocation.txt'
 this_path = os.path.abspath(os.path.dirname(__file__))
 test_script_path = f"{os.environ.get('GITHUB_WORKSPACE')}/renode/test.sh"
 inv_data_str = ""
-robot_name = glob(sys.argv[1])[0].split(".")[0]
+robot_name = sys.argv[1].split(".")[0]
 
 try:
     with open(INVOCATION_DATA_PATH, 'r') as f:
