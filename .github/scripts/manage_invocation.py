@@ -10,8 +10,12 @@ logging.basicConfig(format="[%(asctime)s] %(levelname)-8s| %(message)s")
 l = logging.getLogger(__name__)
 
 def get_invocation_details():
-    with open(INVOCATION_DETAILS, 'r') as f:
-        return f.read().split("--")
+    try:
+        with open(INVOCATION_DETAILS, 'r') as f:
+            return f.read().split("--")
+    except IOError as e:
+        l.error(str(e))
+        sys.exit(1)
 
 def open_i_func(arg):
     i = Invocation()
