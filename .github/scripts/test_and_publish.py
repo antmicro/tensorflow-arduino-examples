@@ -60,13 +60,47 @@ with open(tmp.name, 'w') as log:
             print(line)
 
 
+i.add_log_to_target(
+    target_name=robot_name,
+    log_path=tmp.name
+    )
+
+dumps = glob('*.dump')
+
+for dump_file in dumps:
+    dump_file_target = dump_file.split(".")[0]
+
+    graph_directory = f'{dump_file_target}_graphs'
+    os.makedirs(graph_directory)
+
+    v_args = [
+            'python',
+            f'{os.environ["GITHUB_WORKSPACE"]}/{os.environ["METRICS_VISUALIZER"]}',
+            dump_file,
+            '--no-dialogs',
+            '-o',
+            graph_directory
+    ]
+    v_process = subprocess.Popen(v_args)
+    v_process.communicate()
+
+    if v_process.returncode == 0:
+        graph_files = glob(f'{graph_directory}/*.png')
+        
+        for graph_f in graph_files:
+            i.send_file_target(
+                    target_name=robot_name,
+                    file_name=f'{dump_file_target}_{os.path.basename(graph_f)}',
+                    file_path=graph_f
+                    )
+        
+    
 expected_artifact_paths = [
         'robot_output.xml',
         'log.html',
         'report.html',
         ]
-expected_artifact_paths.extend(glob('*.dump'))
-expected_artifact_paths.extend(glob('graphs/*.png'))
+expected_artifact_paths.extend(dumps)
 
 existing_artifact_paths = [x for x in expected_artifact_paths if os.path.isfile(x)]
 
@@ -77,10 +111,6 @@ for path in existing_artifact_paths:
         file_path=path
         )
 
-i.add_log_to_target(
-    target_name=robot_name,
-    log_path=tmp.name
-    )
 
 i.finalize_target(
     name=robot_name, 
