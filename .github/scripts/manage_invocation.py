@@ -74,6 +74,8 @@ def main():
 
     if args.v:
         logging.root.setLevel(logging.INFO)
+    else:
+        logging.root.setLevel(logging.WARNING)
 
     args.func(args)
 
