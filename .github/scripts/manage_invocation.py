@@ -48,27 +48,24 @@ def url_i_func(arg):
 
 def get_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', action='store_true')
+    parser.set_defaults(func=lambda a: parser.print_help())
+    parser.add_argument('-v', action='store_true', help="verbose logging")
     subparsers = parser.add_subparsers()
 
-    open_i = subparsers.add_parser("open")
+    open_i = subparsers.add_parser("open", help="create a new invocation")
     open_i.set_defaults(func=open_i_func)
 
-    close_i = subparsers.add_parser("close")
+    close_i = subparsers.add_parser("close", help="finalize the invocation")
     close_i.add_argument("return_code", type=int)
     close_i.set_defaults(func=close_i_func)
 
-    url_i = subparsers.add_parser("print_url")
+    url_i = subparsers.add_parser("print_url", help="print the invocation URL")
     url_i.set_defaults(func=url_i_func)
 
     return parser
 
 def main():
     parser = get_parser()
-
-    if (len(sys.argv) == 1):
-        parser.print_help()
-        sys.exit(1)
 
     args = parser.parse_args()
 
