@@ -3,7 +3,10 @@
 import subprocess, sys, os, tempfile
 from distantrs import Invocation
 
-INVOCATION_DATA_PATH = '/tmp/distant-rs-invocation.txt'
+INVOCATION_DATA_PATH = os.path.join(
+        tempfile.gettempdir(),
+        'distant-rs-invocation.txt'
+        )
 
 # required to find listener.py
 this_path = os.path.abspath(os.path.dirname(__file__))

@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
-import argparse, sys, logging
+import argparse, sys, os, logging, tempfile
 from distantrs import Invocation
 
-INVOCATION_DETAILS = '/tmp/distant-rs-invocation.txt'
+INVOCATION_DETAILS = os.path.join(
+        tempfile.gettempdir(),
+        '/tmp/distant-rs-invocation.txt'
+        )
 
 logging.basicConfig(format="[%(asctime)s] %(levelname)-8s| %(message)s")
 
