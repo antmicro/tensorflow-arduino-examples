@@ -10,10 +10,14 @@ INVOCATION_DATA_PATH = '/tmp/distant-rs-invocation.txt'
 this_path = os.path.abspath(os.path.dirname(__file__))
 test_script_path = f"{os.environ.get('GITHUB_WORKSPACE')}/renode/test.sh"
 inv_data_str = ""
-robot_name = glob("*.robot")[0].split(".")[0]
+robot_name = glob(sys.argv[1])[0].split(".")[0]
 
-with open(INVOCATION_DATA_PATH, 'r') as f:
-    inv_data_str = f.read()
+try:
+    with open(INVOCATION_DATA_PATH, 'r') as f:
+        inv_data_str = f.read()
+except IOError:
+    print(str(e))
+    sys.exit(1)
 
 inv_data_lst = inv_data_str.split("--")
 
@@ -30,9 +34,9 @@ with open(tmp.name, 'w') as log:
     subprocess_args = [
             test_script_path, 
             "--listener",
-            os.path.join(this_path, f"results_listener.py:{inv_data_str}")
-                ]
-    subprocess_args.extend(sys.argv[1:])
+            os.path.join(this_path, f"results_listener.py:{inv_data_str}"),
+            sys.argv[1],
+    ]
 
     process = subprocess.Popen(
         subprocess_args,
