@@ -5,7 +5,7 @@ from distantrs import Invocation
 
 INVOCATION_DETAILS = os.path.join(
         tempfile.gettempdir(),
-        '/tmp/distant-rs-invocation.txt'
+        'distant-rs-invocation.txt'
         )
 
 logging.basicConfig(format="[%(asctime)s] %(levelname)-8s| %(message)s")
@@ -15,10 +15,25 @@ l = logging.getLogger(__name__)
 def get_invocation_details():
     try:
         with open(INVOCATION_DETAILS, 'r') as f:
-            return f.read().split("--")
+            return f.read().replace("\n","").split("--")
     except IOError as e:
         l.error(str(e))
         sys.exit(1)
+
+def get_invocation_from_file():
+    i_details = get_invocation_details()
+
+    if len(i_details) != 2:
+        l.error(f"Invalid {INVOCATION_DETAILS}!")
+        sys.exit(1)
+
+    l.info(f'Loaded ID: {i_details[0]}')
+    l.info(f'Loaded token: {i_details[1]}')
+
+    return Invocation(
+            invocation_id=i_details[0],
+            auth_token=i_details[1],
+            )
 
 def open_i_func(arg):
     i = Invocation()
@@ -31,23 +46,18 @@ def open_i_func(arg):
         f.write(f'{i.invocation_id}--{i.auth_token}')
 
 def close_i_func(arg):
-    i_details = get_invocation_details()
+    i = get_invocation_from_file()
     ret = 5 if arg.return_code == 0 else 6
 
-    if len(i_details) != 2:
-        l.error(f"Invalid {INVOCATION_DETAILS}!")
-
-    l.info(f'Loaded ID: {i_details[0]}')
-    l.info(f'Loaded token: {i_details[1]}')
     l.info(f'Real code: {arg.return_code}')
     l.info(f'Flattened code: {ret}')
 
-    i = Invocation(
-            invocation_id=i_details[0],
-            auth_token=i_details[1],
-            )
     i.update_status(ret)
     i.close()
+
+def upload_log_func(arg):
+    i = get_invocation_from_file()
+    i.send_file('build.log', arg.file)
 
 def url_i_func(arg):
     i_details = get_invocation_details()
@@ -66,8 +76,15 @@ def get_parser():
     close_i.add_argument("return_code", type=int)
     close_i.set_defaults(func=close_i_func)
 
+    upload_log = subparsers.add_parser("upload_log", help="upload main invocation log")
+    upload_log.add_argument("file", type=str)
+    upload_log.set_defaults(func=upload_log_func)
+
     url_i = subparsers.add_parser("print_url", help="print the invocation URL")
     url_i.set_defaults(func=url_i_func)
+
+    inv_file = subparsers.add_parser("file_location", help="get location of invocation details file")
+    inv_file.set_defaults(func=lambda a: print(INVOCATION_DETAILS))
 
     return parser
 

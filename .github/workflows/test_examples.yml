@@ -27,6 +27,8 @@ jobs:
     env:
       METRICS_VISUALIZER: renode/tools/metrics_analyzer/metrics_visualizer/metrics-visualizer.py
       TENSORFLOW_PATH: "${{ github.workspace }}/tensorflow"
+    outputs:
+      invdetails: ${{ steps.invopen.outputs.invdetails }}
     steps:
       - name: Configure git
         run: |
@@ -62,7 +64,16 @@ jobs:
           pip install git+https://github.com/antmicro/distant-rs.git
 
       - name: Open Invocation
-        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py open
+        id: invopen
+        run: |
+          $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py open
+          export INV_FILE=`$GITHUB_WORKSPACE/.github/scripts/manage_invocation.py file_location`
+          export INV_DETAILS=`cat $INV_FILE`
+          echo $INV_FILE
+          echo "::set-output name=invdetails::$INV_DETAILS"
+
+      - name: Print Invocation URL
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py print_url
 
       - name: Test person-detection
         run: |
@@ -132,17 +143,6 @@ jobs:
             examples/micro-speech/*.dump
             examples/micro-speech/*_graphs
 
-      - name: Close Invocation (failed)
-        if: ${{ failure() || cancelled() }}
-        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 1
-
-      - name: Close Invocation (success)
-        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 0
-
-      - name: Print Invocation URL
-        if: ${{ always() }}
-        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py print_url
-
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
@@ -159,8 +159,12 @@ jobs:
 
   test_finalize:
     needs: test
+    if: ${{ always() }}
     runs-on: ubuntu-18.04
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Set Up Python
         uses: actions/setup-python@v2
 
@@ -181,10 +185,27 @@ jobs:
         run: curl $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs -u $GH_SERVICE_ACCOUNT_NAME:GH_SERVICE_ACCOUNT_TOKEN > jobs.json
 
       - name: Print jobs
-        run: jq jobs.json
+        run: jq '.' jobs.json
 
       - name: Get the job log
         run: |
           export JOB_LOG_URL=`jq -r '.jobs[] | select(.name=="test").url' jobs.json`/logs
-          curl -L $JOB_LOG_URL -u -u $GH_SERVICE_ACCOUNT_NAME:GH_SERVICE_ACCOUNT_TOKEN > test.txt
+          curl -L $JOB_LOG_URL -u $GH_SERVICE_ACCOUNT_NAME:$GH_SERVICE_ACCOUNT_TOKEN > test.txt
           cat test.txt
+
+      - name: Restore Invocation details file
+        run: |
+          export INV_FILE=`$GITHUB_WORKSPACE/.github/scripts/manage_invocation.py file_location`
+          echo $INV_FILE
+          echo "${{ needs.test.outputs.invdetails }}" > $INV_FILE
+
+      - name: Upload build log
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py -v upload_log test.txt
+
+      - name: Close Invocation (failed)
+        if: ${{ needs.test.outputs.job_status != 'success' }}
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 1
+
+      - name: Close Invocation (success)
+        if: ${{ needs.test.outputs.job_status == 'success' }}
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 0
