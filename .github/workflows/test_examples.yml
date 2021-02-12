@@ -178,4 +178,13 @@ jobs:
           pip install git+https://github.com/antmicro/distant-rs.git
 
       - name: Get jobs
-        run: curl $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs -u $GH_SERVICE_ACCOUNT_NAME:GH_SERVICE_ACCOUNT_TOKEN | jq
+        run: curl $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs -u $GH_SERVICE_ACCOUNT_NAME:GH_SERVICE_ACCOUNT_TOKEN > jobs.json
+
+      - name: Print jobs
+        run: jq jobs.json
+
+      - name: Get the job log
+        run: |
+          export JOB_LOG_URL=`jq -r '.jobs[] | select(.name=="test").url' jobs.json`/logs
+          curl -L $JOB_LOG_URL -u -u $GH_SERVICE_ACCOUNT_NAME:GH_SERVICE_ACCOUNT_TOKEN > test.txt
+          cat test.txt
