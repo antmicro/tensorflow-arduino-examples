@@ -14,15 +14,17 @@ on:
       - '.github/workflows/test_examples.yml'
   workflow_dispatch:
 
+env:
+  GH_SERVICE_ACCOUNT_NAME: "tflite-bot"
+  GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
+  GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
+  GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+  DISTANT_RS_BUCKET: ${{ secrets.DISTANT_RS_BUCKET }}
+
 jobs:
   test:
     runs-on: ubuntu-18.04
     env:
-      GH_SERVICE_ACCOUNT_NAME: "tflite-bot"
-      GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
-      GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
-      GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
-      DISTANT_RS_BUCKET: ${{ secrets.DISTANT_RS_BUCKET }}
       METRICS_VISUALIZER: renode/tools/metrics_analyzer/metrics_visualizer/metrics-visualizer.py
       TENSORFLOW_PATH: "${{ github.workspace }}/tensorflow"
     steps:
@@ -155,3 +157,25 @@ jobs:
             echo "no changes";
           fi
 
+  test_finalize:
+    needs: test
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+
+      - name: Configure GCP token
+        run: |
+          echo "$GTOKEN" | base64 -d > $GOOGLE_APPLICATION_CREDENTIALS
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS" >> $GITHUB_ENV
+        env:
+          GTOKEN: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+          GOOGLE_APPLICATION_CREDENTIALS: "${{ runner.temp }}/google_sa.json"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install git+https://github.com/antmicro/distant-rs.git
+
+      - name: Get jobs
+        run: curl $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs -u $GH_SERVICE_ACCOUNT_NAME:GH_SERVICE_ACCOUNT_TOKEN | jq
