@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 
-import argparse, sys, os, logging, tempfile
+import argparse, sys, os, logging, tempfile, requests
+from urllib.parse import urljoin
+from requests.auth import HTTPBasicAuth
 from distantrs import Invocation
 
 INVOCATION_DETAILS = os.path.join(
         tempfile.gettempdir(),
         'distant-rs-invocation.txt'
         )
+
+INVOCATION_URL = "https://source.cloud.google.com/results/invocations/{}"
+
+GITHUB_API_URL = "https://api.github.com"
 
 logging.basicConfig(format="[%(asctime)s] %(levelname)-8s| %(message)s")
 
@@ -35,6 +41,39 @@ def get_invocation_from_file():
             auth_token=i_details[1],
             )
 
+def gh_checks_func(arg):
+    i = get_invocation_from_file()
+    i_proto = i.invocation_viewer.get_invocation()
+
+    repo = arg.repo or os.environ.get("GITHUB_REPOSITORY")
+    sha = arg.sha or os.environ.get("GITHUB_SHA")
+    ctx = arg.ctx
+
+    u = arg.user or os.environ.get("GH_SERVICE_ACCOUNT_NAME")
+    p = arg.token or os.environ.get("GH_SERVICE_ACCOUNT_TOKEN")
+
+    status_mapping = {
+            1: "pending",
+            5: "success",
+            6: "failure",
+            9: "error",
+    }
+
+    json_body = {
+            "state": status_mapping[i_proto.status_attributes.status],
+            "target_url": INVOCATION_URL.format(i.invocation_id),
+            "context": "Build Results",
+    }
+
+    post_url = urljoin(GITHUB_API_URL, f'/repos/{repo}/statuses/{sha}')
+
+    r = requests.post(
+            post_url,
+            json=json_body,
+            auth=HTTPBasicAuth(u, p)
+            )
+    r.raise_for_status()
+
 def open_i_func(arg):
     i = Invocation()
     i.open(timeout=arg.timeout)
@@ -62,7 +101,7 @@ def upload_log_func(arg):
 
 def url_i_func(arg):
     i_details = get_invocation_details()
-    print(f"https://source.cloud.google.com/results/invocations/{i_details[0]}")
+    print(INVOCATION_URL.format(i_details[0]))
 
 def get_parser():
     parser = argparse.ArgumentParser()
@@ -84,6 +123,14 @@ def get_parser():
 
     url_i = subparsers.add_parser("print_url", help="print the invocation URL")
     url_i.set_defaults(func=url_i_func)
+
+    gh_checks = subparsers.add_parser("gh_checks", help="create a commit status from invocation")
+    gh_checks.add_argument("--user", type=str, help="GitHub username")
+    gh_checks.add_argument("--token", type=str, help="GitHub Personal Access Token")
+    gh_checks.add_argument("--repo", type=str, help="full repository slug")
+    gh_checks.add_argument("--sha", type=str, help="commit SHA")
+    gh_checks.add_argument("--ctx", type=str, default="Build Results", help="status context")
+    gh_checks.set_defaults(func=gh_checks_func)
 
     inv_file = subparsers.add_parser("file_location", help="get location of invocation details file")
     inv_file.set_defaults(func=lambda a: print(INVOCATION_DETAILS))
