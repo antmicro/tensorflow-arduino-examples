@@ -10,6 +10,7 @@ on:
       - 'tensorflow/**'
       - 'examples/*/*.robot'
       - 'examples/*/build.sh'
+  workflow_dispatch:
 
 jobs:
   test:
