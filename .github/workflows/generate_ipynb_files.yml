@@ -5,6 +5,7 @@ on:
     paths:
     - 'examples/*/*.py'
     - 'examples/*/build.sh'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -64,6 +65,7 @@ jobs:
           git config --global user.email $GH_SERVICE_ACCOUNT_EMAIL
 
       - name: Commit and push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           git add examples/*/*.ipynb
           if [ -n "$(git status --porcelain)" ]; then
