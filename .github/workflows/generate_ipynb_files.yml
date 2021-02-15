@@ -15,6 +15,9 @@ jobs:
       GH_SERVICE_ACCOUNT_NAME: "tflite-bot"
       GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
       GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
+      PREPARE_BUILD_SH: |
+        echo -e "git clone https://github.com/antmicro/tensorflow-arduino-examples.git \n$(cat build.sh)" > build.sh
+        sed -i 's/^/!/' build.sh
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -32,7 +35,7 @@ jobs:
         run: |
           cd examples/person-detection
           cp person_detection.py person_detection_build_binary.py
-          sed -i 's/^/!/' build.sh
+          $PREPARE_BUILD_SH
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' person_detection_build_binary.py
           jupytext --to ipynb person_detection.py person_detection_build_binary.py
 
@@ -40,7 +43,7 @@ jobs:
         run: |
           cd examples/magic-wand
           cp magic_wand.py magic_wand_build_binary.py
-          sed -i 's/^/!/' build.sh
+          $PREPARE_BUILD_SH
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' magic_wand_build_binary.py
           jupytext --to ipynb magic_wand.py magic_wand_build_binary.py
 
@@ -48,7 +51,7 @@ jobs:
         run: |
           cd examples/hello-world
           cp hello_world.py hello_world_build_binary.py
-          sed -i 's/^/!/' build.sh
+          $PREPARE_BUILD_SH
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' hello_world_build_binary.py
           jupytext --to ipynb hello_world.py hello_world_build_binary.py
           
@@ -56,7 +59,7 @@ jobs:
         run: |
           cd examples/micro-speech
           cp micro_speech.py micro_speech_build_binary.py
-          sed -i 's/^/!/' build.sh
+          $PREPARE_BUILD_SH
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' micro_speech_build_binary.py
           jupytext --to ipynb micro_speech.py micro_speech_build_binary.py
 
