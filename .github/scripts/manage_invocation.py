@@ -37,10 +37,11 @@ def get_invocation_from_file():
 
 def open_i_func(arg):
     i = Invocation()
-    i.open()
+    i.open(timeout=arg.timeout)
 
     l.info(f'ID: {i.invocation_id}')
     l.info(f'Token: {i.auth_token}')
+    l.info(f'Timeout: {arg.timeout}')
 
     with open(INVOCATION_DETAILS, 'w') as f:
         f.write(f'{i.invocation_id}--{i.auth_token}')
@@ -70,6 +71,7 @@ def get_parser():
     subparsers = parser.add_subparsers()
 
     open_i = subparsers.add_parser("open", help="create a new invocation")
+    open_i.add_argument("--timeout", type=int, help="time in minutes after which the invocation will be automatically finalized", default=30)
     open_i.set_defaults(func=open_i_func)
 
     close_i = subparsers.add_parser("close", help="finalize the invocation")
