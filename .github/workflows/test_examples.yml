@@ -5,11 +5,13 @@ on:
       - 'tensorflow/**'
       - 'examples/*/*.robot'
       - 'examples/*/build.sh'
+      - '.github/workflows/test_examples.yml'
   pull_request:
     paths:
       - 'tensorflow/**'
       - 'examples/*/*.robot'
       - 'examples/*/build.sh'
+      - '.github/workflows/test_examples.yml'
   workflow_dispatch:
 
 jobs:

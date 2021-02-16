@@ -5,6 +5,7 @@ on:
     paths:
     - 'examples/*/*.py'
     - 'examples/*/build.sh'
+    - '.github/workflows/generate_ipynb_files.yml'
   workflow_dispatch:
 
 jobs:
