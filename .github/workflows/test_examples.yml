@@ -203,9 +203,9 @@ jobs:
         run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py -v upload_log test.txt
 
       - name: Close Invocation (failed)
-        if: ${{ needs.test.outputs.job_status != 'success' }}
+        if: ${{ needs.test.result != 'success' }}
         run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 1
 
       - name: Close Invocation (success)
-        if: ${{ needs.test.outputs.job_status == 'success' }}
+        if: ${{ needs.test.result == 'success' }}
         run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 0
