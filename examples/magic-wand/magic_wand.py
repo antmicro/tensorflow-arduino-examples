@@ -17,6 +17,7 @@
 import os
 from renode_colab_tools import metrics
 os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
+os.environ['TENSORFLOW_PATH'] = os.getcwd()+"/tensorflow-arduino-examples/tensorflow"
 
 # %%
 !mkdir -p binaries/magic_wand && cd binaries/magic_wand && wget https://github.com/antmicro/tensorflow-arduino-examples-binaries/raw/master/magic_wand/magic_wand.ino.elf # fetch prebuilt binaries

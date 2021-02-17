@@ -17,6 +17,7 @@
 import os
 from renode_colab_tools import image, metrics
 os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
+os.environ['TENSORFLOW_PATH'] = os.getcwd()+"/tensorflow-arduino-examples/tensorflow"
 
 # %%
 !mkdir -p binaries/person_detection && cd binaries/person_detection && wget https://github.com/antmicro/tensorflow-arduino-examples-binaries/raw/master/person_detection/person_detection.ino.elf # fetch prebuilt binaries

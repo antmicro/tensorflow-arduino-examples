@@ -16,6 +16,7 @@
 import os
 from renode_colab_tools import metrics
 os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
+os.environ['TENSORFLOW_PATH'] = os.getcwd()+"/tensorflow-arduino-examples/tensorflow"
 
 # %%
 !mkdir -p binaries/hello_world && cd binaries/hello_world && wget https://github.com/antmicro/tensorflow-arduino-examples-binaries/raw/master/hello_world/hello_world.ino.elf # fetch prebuilt binaries
