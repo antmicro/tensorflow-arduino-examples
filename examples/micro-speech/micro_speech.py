@@ -18,6 +18,7 @@
 import os
 from renode_colab_tools import audio, metrics
 os.environ['PATH'] = os.getcwd()+"/renode:"+os.environ['PATH']
+os.environ['TENSORFLOW_PATH'] = os.getcwd()+"/tensorflow-arduino-examples/tensorflow"
 
 # %%
 !mkdir -p binaries/micro_speech && cd binaries/micro_speech && wget https://github.com/antmicro/tensorflow-arduino-examples-binaries/raw/master/micro_speech/micro_speech.ino.elf # fetch prebuilt binaries

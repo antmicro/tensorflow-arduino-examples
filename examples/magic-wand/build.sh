@@ -1,4 +1,3 @@
-[ -z "$TENSORFLOW_PATH" ] && export TENSORFLOW_PATH=tensorflow-arduino-examples/tensorflow
 curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 bin/arduino-cli core install arduino:mbed
 bin/arduino-cli lib install Arduino_LSM9DS1@1.1.0
