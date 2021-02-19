@@ -21,14 +21,14 @@
  * Title:        arm_nn_mat_mult_kernel_s8_s16_reordered.c
  * Description:  Matrix-multiplication function for convolution with reordered columns
  *
- * $Date:        February 27, 2020
- * $Revision:    V.1.0.2
+ * $Date:        09. October 2020
+ * $Revision:    V.1.0.3
  *
  * Target Processor:  Cortex-M cores
  * -------------------------------------------------------------------- */
 
 #include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/NN/Include/arm_nnfunctions.h"
-#include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/arm_math.h"
+#include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/NN/Include/arm_nnsupportfunctions.h"
 
 /*
  * Matrix-multiplication with re-ordered input and bias inputs for convolution with per-channel
