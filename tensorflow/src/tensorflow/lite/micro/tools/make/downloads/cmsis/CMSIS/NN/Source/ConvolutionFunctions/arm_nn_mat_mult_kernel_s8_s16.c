@@ -21,21 +21,21 @@
  * Title:        arm_nn_mat_mult_kernel_s8_s16.c
  * Description:  Matrix-multiplication function for convolution
  *
- * $Date:        May 29, 2020
- * $Revision:    V.1.0.2
+ * $Date:        09. October 2020
+ * $Revision:    V.1.0.3
  *
  * Target Processor:  Cortex-M cores
  * -------------------------------------------------------------------- */
 
-#include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/arm_math.h"
 #include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/NN/Include/arm_nnfunctions.h"
+#include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/NN/Include/arm_nnsupportfunctions.h"
 
 /*
-   * Matrix-multiplication function for convolution with per-channel requantization.
-   *
-   * Refer header file for details.
-   *
-   */
+ * Matrix-multiplication function for convolution with per-channel requantization.
+ *
+ * Refer header file for details.
+ *
+ */
 
 q7_t *arm_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
                                     const q15_t *input_b,

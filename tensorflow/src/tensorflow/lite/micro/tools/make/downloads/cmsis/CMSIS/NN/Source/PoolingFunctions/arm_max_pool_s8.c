@@ -21,25 +21,23 @@
  * Title:        arm_max_pool_s8.c
  * Description:  Pooling function implementations
  *
- * $Date:        June 11, 2020
- * $Revision:    V.2.0.0
+ * $Date:        09. October 2020
+ * $Revision:    V.2.0.1
  *
  * Target Processor:  Cortex-M CPUs
  *
  * -------------------------------------------------------------------- */
 
-#include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/arm_math.h"
 #include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/NN/Include/arm_nnfunctions.h"
+#include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/NN/Include/arm_nnsupportfunctions.h"
 
-static void compare_and_replace_if_larger_q7(q7_t *base,
-                                             const q7_t *target,
-                                             int32_t length)
+static void compare_and_replace_if_larger_q7(q7_t *base, const q7_t *target, int32_t length)
 {
 #if defined(ARM_MATH_MVEI)
     int32_t loop_count = (length + 15) / 16;
     for (int i = 0; i < loop_count; i++)
     {
-        mve_pred16_t p = vctp16q((uint32_t)length);
+        mve_pred16_t p = vctp8q((uint32_t)length);
         const int8x16_t op_1 = vldrbq_z_s8(base, p);
         const int8x16_t op_2 = vldrbq_z_s8(target, p);
         const int8x16_t max = vmaxq_m_s8(vuninitializedq_s8(), op_1, op_2, p);
@@ -96,12 +94,10 @@ static void compare_and_replace_if_larger_q7(q7_t *base,
 #endif
 }
 
-static void
-clamp_output(q7_t *source, int32_t length, const int32_t act_min, const int32_t act_max)
+static void clamp_output(q7_t *source, int32_t length, const int32_t act_min, const int32_t act_max)
 {
 #if defined(ARM_MATH_MVEI)
-    int32_t
-        loop_count = (length + 15) / 16;
+    int32_t loop_count = (length + 15) / 16;
     for (int i = 0; i < loop_count; i++)
     {
         mve_pred16_t p = vctp16q((uint32_t)length);
@@ -109,8 +105,7 @@ clamp_output(q7_t *source, int32_t length, const int32_t act_min, const int32_t 
         const int8x16_t src = vldrbq_z_s8(source, p);
         const int8x16_t predicated_min = vdupq_m_n_s8(vuninitializedq_s8(), (int8_t)act_min, p);
         const int8x16_t predicated_max = vdupq_m_n_s8(vuninitializedq_s8(), (int8_t)act_max, p);
-        int8x16_t
-            res = vmaxq_m_s8(vuninitializedq_s8(), src, predicated_min, p);
+        int8x16_t res = vmaxq_m_s8(vuninitializedq_s8(), src, predicated_min, p);
         res = vminq_m_s8(vuninitializedq_s8(), src, predicated_max, p);
         vstrbq_p_s8(source, res, p);
         source += 16;
@@ -158,20 +153,19 @@ clamp_output(q7_t *source, int32_t length, const int32_t act_min, const int32_t 
  */
 
 /*
-   * Optimized s8 max pooling function
-   *
-   * Refer to header file for details.
-   *
-   */
+ * Optimized s8 max pooling function
+ *
+ * Refer to header file for details.
+ *
+ */
 
-arm_status
-arm_max_pool_s8(const cmsis_nn_context *ctx,
-                const cmsis_nn_pool_params *pool_params,
-                const cmsis_nn_dims *input_dims,
-                const q7_t *src,
-                const cmsis_nn_dims *filter_dims,
-                const cmsis_nn_dims *output_dims,
-                q7_t *dst)
+arm_status arm_max_pool_s8(const cmsis_nn_context *ctx,
+                           const cmsis_nn_pool_params *pool_params,
+                           const cmsis_nn_dims *input_dims,
+                           const q7_t *src,
+                           const cmsis_nn_dims *filter_dims,
+                           const cmsis_nn_dims *output_dims,
+                           q7_t *dst)
 {
     const int32_t input_y = input_dims->h;
     const int32_t input_x = input_dims->w;
