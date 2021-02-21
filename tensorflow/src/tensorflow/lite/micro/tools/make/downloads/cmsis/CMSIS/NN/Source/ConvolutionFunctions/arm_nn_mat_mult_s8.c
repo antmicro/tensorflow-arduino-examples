@@ -21,21 +21,20 @@
  * Title:        arm_nn_mat_mult_s8.c
  * Description:  General Matrix-multiplication function
  *
- * $Date:        July 27, 2020
- * $Revision:    V.2.0.4
+ * $Date:        09. October 2020
+ * $Revision:    V.2.0.5
  *
  * Target Processor:  Cortex-M cores
  * -------------------------------------------------------------------- */
 
-#include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/arm_math.h"
-#include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/NN/Include/arm_nnfunctions.h"
+#include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/NN/Include/arm_nnsupportfunctions.h"
 
 /*
-   * s8 General matrix multiplication function with per-channel requantization for upto 4 column batches.
-   *
-   * Refer header file for details.
-   *
-   */
+ * s8 General matrix multiplication function with per-channel requantization for upto 4 column batches.
+ *
+ * Refer header file for details.
+ *
+ */
 
 q7_t *arm_nn_mat_mult_s8(const q7_t *input_row,
                          const q7_t *input_col,
