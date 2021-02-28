@@ -45,6 +45,7 @@
    * - Support Vector Machine functions (SVM)
    * - Bayes classifier functions
    * - Distance functions
+   * - Quaternion functions
    *
    * The library has generally separate functions for operating on 8-bit integers, 16-bit integers,
    * 32-bit integer and 32-bit floating-point values.
@@ -160,7 +161,9 @@
    * - DISABLEFLOAT16:
    *
    * Disable float16 algorithms when __fp16 is not supported for a
-   * specific compiler / core configuration
+   * specific compiler / core configuration.
+   * This is only valid for scalar. When vector architecture is
+   * supporting f16 then it can't be disabled.
    *
    * <hr>
    * \section pack CMSIS-DSP in ARM::CMSIS Pack
@@ -223,6 +226,7 @@
 #include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/dsp/fast_math_functions.h"
 #include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/dsp/transform_functions.h"
 #include "tensorflow/lite/micro/tools/make/downloads/cmsis/CMSIS/DSP/Include/dsp/filtering_functions.h"
+#include "dsp/quaternion_math_functions.h"
 
 
 
