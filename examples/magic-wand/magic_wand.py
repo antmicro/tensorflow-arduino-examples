@@ -44,6 +44,7 @@ time.sleep(5) #waits for creating uart.dump
 !timeout 60 tail -c+2 -f renode/uart.dump | sed '/\* \* \* \* \* \* \* \*/ q'
 tell_renode('q')
 expect_cli('Renode is quitting')
+time.sleep(1) #wait not to kill Renode forcefully
 shutdown_renode()
 
 # %% [markdown]
