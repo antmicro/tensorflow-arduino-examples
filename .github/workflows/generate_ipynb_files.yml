@@ -32,6 +32,8 @@ jobs:
         run: |
           cd examples/person-detection
           cp person_detection.py person_detection_build_binary.py
+          sed -i 's/$NOTEBOOK/person_detection/g' person_detection.py
+          sed -i 's/$NOTEBOOK/person_detection_build_binary/g' person_detection_build_binary.py
           $GITHUB_WORKSPACE/.github/scripts/prepare_build_for_notebook.sh
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' person_detection_build_binary.py
           jupytext --to ipynb person_detection.py person_detection_build_binary.py
@@ -40,6 +42,8 @@ jobs:
         run: |
           cd examples/magic-wand
           cp magic_wand.py magic_wand_build_binary.py
+          sed -i 's/$NOTEBOOK/magic_wand/g' magic_wand.py
+          sed -i 's/$NOTEBOOK/magic_wand_build_binary/g' magic_wand_build_binary.py
           $GITHUB_WORKSPACE/.github/scripts/prepare_build_for_notebook.sh
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' magic_wand_build_binary.py
           jupytext --to ipynb magic_wand.py magic_wand_build_binary.py
@@ -48,6 +52,8 @@ jobs:
         run: |
           cd examples/hello-world
           cp hello_world.py hello_world_build_binary.py
+          sed -i 's/$NOTEBOOK/hello_world/g' hello_world.py
+          sed -i 's/$NOTEBOOK/hello_world_build_binary/g' hello_world_build_binary.py
           $GITHUB_WORKSPACE/.github/scripts/prepare_build_for_notebook.sh
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' hello_world_build_binary.py
           jupytext --to ipynb hello_world.py hello_world_build_binary.py
@@ -56,6 +62,8 @@ jobs:
         run: |
           cd examples/micro-speech
           cp micro_speech.py micro_speech_build_binary.py
+          sed -i 's/$NOTEBOOK/micro_speech/g' micro_speech.py
+          sed -i 's/$NOTEBOOK/micro_speech_build_binary/g' micro_speech_build_binary.py
           $GITHUB_WORKSPACE/.github/scripts/prepare_build_for_notebook.sh
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' micro_speech_build_binary.py
           jupytext --to ipynb micro_speech.py micro_speech_build_binary.py

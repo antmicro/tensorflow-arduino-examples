@@ -1,6 +1,17 @@
 # %% [markdown]
 """
 ![Renode](https://antmicro.com/OpenSource/assets/images/projects/renode.png)
+<table align="left">
+  <td>
+    <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/hello-world/$NOTEBOOK.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
+  </td>
+  <td>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/hello-world/$NOTEBOOK.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View ipynb on GitHub</a>
+  </td>
+  <td>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/hello-world/hello_world.py"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View Python source on GitHub</a>
+  </td>
+</table>
 """
 
 # %% [markdown]
