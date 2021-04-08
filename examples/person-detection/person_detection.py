@@ -91,8 +91,4 @@ metrics.show_executed_instructions(parser)
 
 # %%
 metrics.configure_plotly_browser_state()
-metrics.show_memory_access(parser)
-
-# %%
-metrics.configure_plotly_browser_state()
 metrics.show_exceptions(parser)
