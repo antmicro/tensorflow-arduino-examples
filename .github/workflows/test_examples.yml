@@ -5,7 +5,7 @@ on:
       - 'tensorflow/**'
       - 'examples/*/*.robot'
       - 'examples/*/build.sh'
-      - '.github/workflows/test_examples.yml'
+      - '.github/**'
   pull_request:
     paths:
       - 'tensorflow/**'
@@ -14,20 +14,34 @@ on:
       - '.github/workflows/test_examples.yml'
   workflow_dispatch:
 
+env:
+  GH_SERVICE_ACCOUNT_NAME: "tflite-bot"
+  GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
+  GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
+  GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+  DISTANT_RS_BUCKET: ${{ secrets.DISTANT_RS_BUCKET }}
+
 jobs:
   test:
     runs-on: ubuntu-18.04
     env:
-      GH_SERVICE_ACCOUNT_NAME: "tflite-bot"
-      GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
-      GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
       METRICS_VISUALIZER: renode/tools/metrics_analyzer/metrics_visualizer/metrics-visualizer.py
       TENSORFLOW_PATH: "${{ github.workspace }}/tensorflow"
+    outputs:
+      invdetails: ${{ steps.invopen.outputs.invdetails }}
     steps:
       - name: Configure git
         run: |
           git config --global user.name $GH_SERVICE_ACCOUNT_NAME
           git config --global user.email $GH_SERVICE_ACCOUNT_EMAIL
+
+      - name: Configure GCP token
+        run: |
+          echo "$GTOKEN" | base64 -d > $GOOGLE_APPLICATION_CREDENTIALS
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS" >> $GITHUB_ENV
+        env:
+          GTOKEN: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+          GOOGLE_APPLICATION_CREDENTIALS: "${{ runner.temp }}/google_sa.json"
         
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -47,14 +61,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r $GITHUB_WORKSPACE/renode/tests/requirements.txt
           pip install -r $GITHUB_WORKSPACE/renode/tools/metrics_analyzer/metrics_visualizer/requirements.txt
+          pip install git+https://github.com/antmicro/distant-rs.git
+
+      - name: Open Invocation
+        id: invopen
+        run: |
+          $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py open --timeout 60
+          export INV_FILE=`$GITHUB_WORKSPACE/.github/scripts/manage_invocation.py file_location`
+          export INV_DETAILS=`cat $INV_FILE`
+          echo $INV_FILE
+          echo "::set-output name=invdetails::$INV_DETAILS"
+
+      - name: Print Invocation URL
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py print_url
 
       - name: Test person-detection
         run: |
           cd examples/person-detection
           ./build.sh
-          $GITHUB_WORKSPACE/renode/test.sh *.robot
-          mkdir graphs
-          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER person_detection.dump --no-dialogs -o graphs
+          $GITHUB_WORKSPACE/.github/scripts/test_and_publish.py *.robot
 
       - name: Upload person-detection artifacts
         uses: actions/upload-artifact@v2
@@ -65,17 +90,13 @@ jobs:
             examples/person-detection/log.html
             examples/person-detection/robot_output.xml
             examples/person-detection/person_detection.dump
-            examples/person-detection/graphs
+            examples/person-detection/*_graphs
 
       - name: Test magic-wand
         run: |
           cd examples/magic-wand
           ./build.sh
-          $GITHUB_WORKSPACE/renode/test.sh *.robot
-          mkdir ring_graphs
-          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER magic_wand_ring.dump --no-dialogs -o ring_graphs
-          mkdir slope_graphs
-          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER magic_wand_slope.dump --no-dialogs -o slope_graphs
+          $GITHUB_WORKSPACE/.github/scripts/test_and_publish.py *.robot
 
       - name: Upload magic-wand artifacts
         uses: actions/upload-artifact@v2
@@ -86,16 +107,13 @@ jobs:
             examples/magic-wand/log.html
             examples/magic-wand/robot_output.xml
             examples/magic-wand/*.dump
-            examples/person-detection/ring_graphs
-            examples/person-detection/slope_graphs
+            examples/magic-wand/*_graphs
 
       - name: Test hello-world
         run: |
           cd examples/hello-world
           ./build.sh
-          $GITHUB_WORKSPACE/renode/test.sh *.robot
-          mkdir graphs
-          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER hello_world.dump --no-dialogs -o graphs
+          $GITHUB_WORKSPACE/.github/scripts/test_and_publish.py *.robot
 
       - name: Upload hello-world artifacts
         uses: actions/upload-artifact@v2
@@ -106,15 +124,13 @@ jobs:
             examples/hello-world/log.html
             examples/hello-world/robot_output.xml
             examples/hello-world/*.dump
-            examples/person-detection/graphs
+            examples/hello-world/*_graphs
 
       - name: Test micro-speech
         run: |
           cd examples/micro-speech
           ./build.sh
-          $GITHUB_WORKSPACE/renode/test.sh *.robot
-          mkdir graphs
-          python $GITHUB_WORKSPACE/$METRICS_VISUALIZER micro_speech.dump --no-dialogs -o graphs
+          $GITHUB_WORKSPACE/.github/scripts/test_and_publish.py *.robot
 
       - name: Upload micro-speech artifacts
         uses: actions/upload-artifact@v2
@@ -125,6 +141,7 @@ jobs:
             examples/micro-speech/log.html
             examples/micro-speech/robot_output.xml
             examples/micro-speech/*.dump
+            examples/micro-speech/*_graphs
 
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -139,3 +156,56 @@ jobs:
           else
             echo "no changes";
           fi
+
+  test_finalize:
+    needs: test
+    if: ${{ always() }}
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+
+      - name: Configure GCP token
+        run: |
+          echo "$GTOKEN" | base64 -d > $GOOGLE_APPLICATION_CREDENTIALS
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS" >> $GITHUB_ENV
+        env:
+          GTOKEN: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+          GOOGLE_APPLICATION_CREDENTIALS: "${{ runner.temp }}/google_sa.json"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install git+https://github.com/antmicro/distant-rs.git
+
+      - name: Get jobs
+        run: curl $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs -u $GH_SERVICE_ACCOUNT_NAME:GH_SERVICE_ACCOUNT_TOKEN > jobs.json
+
+      - name: Print jobs
+        run: jq '.' jobs.json
+
+      - name: Get the job log
+        run: |
+          export JOB_LOG_URL=`jq -r '.jobs[] | select(.name=="test").url' jobs.json`/logs
+          curl -L $JOB_LOG_URL -u $GH_SERVICE_ACCOUNT_NAME:$GH_SERVICE_ACCOUNT_TOKEN > test.txt
+          cat test.txt
+
+      - name: Restore Invocation details file
+        run: |
+          export INV_FILE=`$GITHUB_WORKSPACE/.github/scripts/manage_invocation.py file_location`
+          echo $INV_FILE
+          echo "${{ needs.test.outputs.invdetails }}" > $INV_FILE
+
+      - name: Upload build log
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py -v upload_log test.txt
+
+      - name: Close Invocation (failed)
+        if: ${{ needs.test.result != 'success' }}
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 1
+
+      - name: Close Invocation (success)
+        if: ${{ needs.test.result == 'success' }}
+        run: $GITHUB_WORKSPACE/.github/scripts/manage_invocation.py close 0
