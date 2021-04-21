@@ -33,6 +33,7 @@ AllOpsResolver::AllOpsResolver() {
   AddConv2D();
   AddCos();
   AddCumSum();
+  AddDepthToSpace();
   AddDepthwiseConv2D();
   AddDequantize();
   AddDetectionPostprocess();
@@ -72,7 +73,6 @@ AllOpsResolver::AllOpsResolver() {
   AddRelu();
   AddRelu6();
   AddReshape();
-  AddResizeBilinear();
   AddResizeNearestNeighbor();
   AddRound();
   AddRsqrt();
