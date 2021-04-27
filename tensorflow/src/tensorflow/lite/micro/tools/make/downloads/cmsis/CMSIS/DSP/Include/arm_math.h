@@ -1,11 +1,11 @@
 /******************************************************************************
  * @file     arm_math.h
  * @brief    Public header file for CMSIS DSP Library
- * @version  V1.7.0
- * @date     18. March 2019
+ * @version  V1.9.0
+ * @date     17. March 2021
  ******************************************************************************/
 /*
- * Copyright (c) 2010-2019 Arm Limited or its affiliates. All rights reserved.
+ * Copyright (c) 2010-2021 Arm Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -143,7 +143,13 @@
    *
    * - ARM_MATH_HELIUM:
    *
-   * It implies the flags ARM_MATH_MVEF and ARM_MATH_MVEI and ARM_MATH_FLOAT16.
+   * It implies the flags ARM_MATH_MVEF and ARM_MATH_MVEI and ARM_MATH_MVE_FLOAT16.
+   *
+   * - ARM_MATH_HELIUM_EXPERIMENTAL:
+   *
+   * Only taken into account when ARM_MATH_MVEF, ARM_MATH_MVEI or ARM_MATH_MVE_FLOAT16 are defined.
+   * Enable some vector versions which may have worse performance than scalar
+   * depending on the core / compiler configuration.
    *
    * - ARM_MATH_MVEF:
    *
