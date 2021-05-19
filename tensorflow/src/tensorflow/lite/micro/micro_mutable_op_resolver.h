@@ -254,6 +254,11 @@ class MicroMutableOpResolver : public MicroOpResolver {
                       ParseFullyConnected);
   }
 
+  TfLiteStatus AddGatherNd() {
+    return AddBuiltin(BuiltinOperator_GATHER_ND, tflite::Register_GATHER_ND(),
+                      ParseGatherNd);
+  }
+
   TfLiteStatus AddGreater() {
     return AddBuiltin(BuiltinOperator_GREATER,
                       tflite::ops::micro::Register_GREATER(), ParseGreater);
@@ -269,6 +274,10 @@ class MicroMutableOpResolver : public MicroOpResolver {
     return AddBuiltin(BuiltinOperator_HARD_SWISH,
                       tflite::ops::micro::Register_HARD_SWISH(),
                       ParseHardSwish);
+  }
+
+  TfLiteStatus AddIf() {
+    return AddBuiltin(BuiltinOperator_IF, tflite::Register_IF(), ParseIf);
   }
 
   TfLiteStatus AddL2Normalization() {
