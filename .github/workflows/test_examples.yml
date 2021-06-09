@@ -2,13 +2,13 @@ name: Arduino examples tests
 on:
   push:
     paths:
-      - 'tensorflow/**'
+      - 'tflite-micro/**'
       - 'examples/*/*.robot'
       - 'examples/*/build.sh'
       - '.github/workflows/test_examples.yml'
   pull_request:
     paths:
-      - 'tensorflow/**'
+      - 'tflite-micro/**'
       - 'examples/*/*.robot'
       - 'examples/*/build.sh'
       - '.github/workflows/test_examples.yml'
@@ -22,7 +22,7 @@ jobs:
       GH_SERVICE_ACCOUNT_EMAIL: "tflite-bot@antmicro.com"
       GH_SERVICE_ACCOUNT_TOKEN: ${{ secrets.GH_SERVICE_ACCOUNT_TOKEN }}
       METRICS_VISUALIZER: renode/tools/metrics_analyzer/metrics_visualizer/metrics-visualizer.py
-      TENSORFLOW_PATH: "${{ github.workspace }}/tensorflow"
+      TENSORFLOW_PATH: "${{ github.workspace }}/tflite-micro"
     steps:
       - name: Configure git
         run: |
