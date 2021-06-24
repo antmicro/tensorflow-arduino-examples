@@ -1,6 +1,6 @@
 # %% [markdown]
 """
-![Renode](https://antmicro.com/OpenSource/assets/images/projects/renode.png)
+![Renode](https://dl.antmicro.com/projects/renode/renode.png)
 <table align="left">
   <td>
     <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/magic-wand/$NOTEBOOK.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
