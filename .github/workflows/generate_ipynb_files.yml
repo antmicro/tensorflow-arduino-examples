@@ -73,13 +73,20 @@ jobs:
           git config --global user.name $GH_SERVICE_ACCOUNT_NAME
           git config --global user.email $GH_SERVICE_ACCOUNT_EMAIL
 
+      - name: GH CLI auth
+        run: echo $GH_SERVICE_ACCOUNT_TOKEN | gh auth login --with-token
+
       - name: Commit and push
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
+          export NEW_BRANCH=bot-$(date +%F_%H-%M)
+          git checkout -b $NEW_BRANCH
           git add examples/*/*.ipynb
           if [ -n "$(git status --porcelain)" ]; then
             git commit -m "Generate ipynb files";
-            git push -u https://$GH_SERVICE_ACCOUNT_NAME:$GH_SERVICE_ACCOUNT_TOKEN@github.com/antmicro/tensorflow-arduino-examples.git master
+            git push -u https://$GH_SERVICE_ACCOUNT_NAME:$GH_SERVICE_ACCOUNT_TOKEN@github.com/antmicro/tensorflow-arduino-examples.git $NEW_BRANCH
+            gh pr create --fill --head $NEW_BRANCH
+            gh pr merge --auto --rebase --delete-branch
           else
             echo "no changes";
           fi
