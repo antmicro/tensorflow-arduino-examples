@@ -18,7 +18,7 @@ jobs:
         run: |
           git config --global user.name $GH_SERVICE_ACCOUNT_NAME
           git config --global user.email $GH_SERVICE_ACCOUNT_EMAIL
-        
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -31,7 +31,7 @@ jobs:
           cd renode
           wget https://dl.antmicro.com/projects/renode/builds/renode-latest.linux-portable.tar.gz
           tar -xzf renode-latest.linux-portable.tar.gz --strip 1
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip

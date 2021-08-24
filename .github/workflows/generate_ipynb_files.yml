@@ -21,7 +21,7 @@ jobs:
 
       - name: Set Up Python
         uses: actions/setup-python@v2
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -57,8 +57,8 @@ jobs:
           $GITHUB_WORKSPACE/.github/scripts/prepare_build_for_notebook.sh
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' hello_world_build_binary.py
           jupytext --to ipynb hello_world.py hello_world_build_binary.py
-          
       - name: Generate micro-speech ipynb
+
         run: |
           cd examples/micro-speech
           cp micro_speech.py micro_speech_build_binary.py
