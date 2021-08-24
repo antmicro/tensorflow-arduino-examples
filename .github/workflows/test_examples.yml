@@ -37,11 +37,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r $GITHUB_WORKSPACE/renode/tests/requirements.txt
           pip install -r $GITHUB_WORKSPACE/renode/tools/metrics_analyzer/metrics_visualizer/requirements.txt
+          ./prepare.sh
 
       - name: Test person-detection
         run: |
-          cd examples/person-detection
-          ./build.sh
+          ./build.sh person_detection
+          cd examples/person_detection
           $GITHUB_WORKSPACE/renode/test.sh *.robot
           mkdir graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER person_detection.dump --no-dialogs -o graphs
@@ -59,8 +60,8 @@ jobs:
 
       - name: Test magic-wand
         run: |
-          cd examples/magic-wand
-          ./build.sh
+          ./build.sh magic_wand
+          cd examples/magic_wand
           $GITHUB_WORKSPACE/renode/test.sh *.robot
           mkdir ring_graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER magic_wand_ring.dump --no-dialogs -o ring_graphs
@@ -81,8 +82,8 @@ jobs:
 
       - name: Test hello-world
         run: |
-          cd examples/hello-world
-          ./build.sh
+          ./build.sh hello_world
+          cd examples/hello_world
           $GITHUB_WORKSPACE/renode/test.sh *.robot
           mkdir graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER hello_world.dump --no-dialogs -o graphs
@@ -100,8 +101,8 @@ jobs:
 
       - name: Test micro-speech
         run: |
-          cd examples/micro-speech
-          ./build.sh
+          ./build.sh micro_speech
+          cd examples/micro_speech
           $GITHUB_WORKSPACE/renode/test.sh *.robot
           mkdir graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER micro_speech.dump --no-dialogs -o graphs
