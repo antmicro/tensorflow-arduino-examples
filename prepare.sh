@@ -1,4 +1,5 @@
 set -x
+git submodule update --init
 curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 bin/arduino-cli core install arduino:mbed
 # Required by magic-wand example
