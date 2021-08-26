@@ -18,7 +18,7 @@ jobs:
         run: |
           git config --global user.name $GH_SERVICE_ACCOUNT_NAME
           git config --global user.email $GH_SERVICE_ACCOUNT_EMAIL
-        
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -31,90 +31,91 @@ jobs:
           cd renode
           wget https://dl.antmicro.com/projects/renode/builds/renode-latest.linux-portable.tar.gz
           tar -xzf renode-latest.linux-portable.tar.gz --strip 1
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r $GITHUB_WORKSPACE/renode/tests/requirements.txt
           pip install -r $GITHUB_WORKSPACE/renode/tools/metrics_analyzer/metrics_visualizer/requirements.txt
+          ./prepare.sh
 
-      - name: Test person-detection
+      - name: Test person_detection
         run: |
-          cd examples/person-detection
-          ./build.sh
+          ./build.sh person_detection
+          cd examples/person_detection
           $GITHUB_WORKSPACE/renode/test.sh *.robot
           mkdir graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER person_detection.dump --no-dialogs -o graphs
 
-      - name: Upload person-detection artifacts
+      - name: Upload person_detection artifacts
         uses: actions/upload-artifact@v2
         with:
           name: person_detection_artifacts
           path: |
-            examples/person-detection/report.html
-            examples/person-detection/log.html
-            examples/person-detection/robot_output.xml
-            examples/person-detection/person_detection.dump
-            examples/person-detection/graphs
+            examples/person_detection/report.html
+            examples/person_detection/log.html
+            examples/person_detection/robot_output.xml
+            examples/person_detection/person_detection.dump
+            examples/person_detection/graphs
 
-      - name: Test magic-wand
+      - name: Test magic_wand
         run: |
-          cd examples/magic-wand
-          ./build.sh
+          ./build.sh magic_wand
+          cd examples/magic_wand
           $GITHUB_WORKSPACE/renode/test.sh *.robot
           mkdir ring_graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER magic_wand_ring.dump --no-dialogs -o ring_graphs
           mkdir slope_graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER magic_wand_slope.dump --no-dialogs -o slope_graphs
 
-      - name: Upload magic-wand artifacts
+      - name: Upload magic_wand artifacts
         uses: actions/upload-artifact@v2
         with:
           name: magic_wand_artifacts
           path: |
-            examples/magic-wand/report.html
-            examples/magic-wand/log.html
-            examples/magic-wand/robot_output.xml
-            examples/magic-wand/*.dump
-            examples/person-detection/ring_graphs
-            examples/person-detection/slope_graphs
+            examples/magic_wand/report.html
+            examples/magic_wand/log.html
+            examples/magic_wand/robot_output.xml
+            examples/magic_wand/*.dump
+            examples/person_detection/ring_graphs
+            examples/person_detection/slope_graphs
 
-      - name: Test hello-world
+      - name: Test hello_world
         run: |
-          cd examples/hello-world
-          ./build.sh
+          ./build.sh hello_world
+          cd examples/hello_world
           $GITHUB_WORKSPACE/renode/test.sh *.robot
           mkdir graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER hello_world.dump --no-dialogs -o graphs
 
-      - name: Upload hello-world artifacts
+      - name: Upload hello_world artifacts
         uses: actions/upload-artifact@v2
         with:
           name: hello_world_artifacts
           path: |
-            examples/hello-world/report.html
-            examples/hello-world/log.html
-            examples/hello-world/robot_output.xml
-            examples/hello-world/*.dump
-            examples/person-detection/graphs
+            examples/hello_world/report.html
+            examples/hello_world/log.html
+            examples/hello_world/robot_output.xml
+            examples/hello_world/*.dump
+            examples/person_detection/graphs
 
-      - name: Test micro-speech
+      - name: Test micro_speech
         run: |
-          cd examples/micro-speech
-          ./build.sh
+          ./build.sh micro_speech
+          cd examples/micro_speech
           $GITHUB_WORKSPACE/renode/test.sh *.robot
           mkdir graphs
           python $GITHUB_WORKSPACE/$METRICS_VISUALIZER micro_speech.dump --no-dialogs -o graphs
 
-      - name: Upload micro-speech artifacts
+      - name: Upload micro_speech artifacts
         uses: actions/upload-artifact@v2
         with:
           name: micro_speech_artifacts
           path: |
-            examples/micro-speech/report.html
-            examples/micro-speech/log.html
-            examples/micro-speech/robot_output.xml
-            examples/micro-speech/*.dump
+            examples/micro_speech/report.html
+            examples/micro_speech/log.html
+            examples/micro_speech/robot_output.xml
+            examples/micro_speech/*.dump
 
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'

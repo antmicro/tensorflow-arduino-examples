@@ -21,16 +21,16 @@ jobs:
 
       - name: Set Up Python
         uses: actions/setup-python@v2
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install jupytext
 
-      - name: Generate person-detection ipynb
+      - name: Generate person_detection ipynb
         # we want the script logic to be included in the resulting ipynb to avoid downloading build.sh in notebook execution
         run: |
-          cd examples/person-detection
+          cd examples/person_detection
           cp person_detection.py person_detection_build_binary.py
           sed -i 's/$NOTEBOOK/person_detection/g' person_detection.py
           sed -i 's/$NOTEBOOK/person_detection_build_binary/g' person_detection_build_binary.py
@@ -38,9 +38,9 @@ jobs:
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' person_detection_build_binary.py
           jupytext --to ipynb person_detection.py person_detection_build_binary.py
 
-      - name: Generate magic-wand ipynb
+      - name: Generate magic_wand ipynb
         run: |
-          cd examples/magic-wand
+          cd examples/magic_wand
           cp magic_wand.py magic_wand_build_binary.py
           sed -i 's/$NOTEBOOK/magic_wand/g' magic_wand.py
           sed -i 's/$NOTEBOOK/magic_wand_build_binary/g' magic_wand_build_binary.py
@@ -48,19 +48,19 @@ jobs:
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' magic_wand_build_binary.py
           jupytext --to ipynb magic_wand.py magic_wand_build_binary.py
 
-      - name: Generate hello-world ipynb
+      - name: Generate hello_world ipynb
         run: |
-          cd examples/hello-world
+          cd examples/hello_world
           cp hello_world.py hello_world_build_binary.py
           sed -i 's/$NOTEBOOK/hello_world/g' hello_world.py
           sed -i 's/$NOTEBOOK/hello_world_build_binary/g' hello_world_build_binary.py
           $GITHUB_WORKSPACE/.github/scripts/prepare_build_for_notebook.sh
           sed -i $'/fetch prebuilt binaries/{r build.sh\n d}' hello_world_build_binary.py
           jupytext --to ipynb hello_world.py hello_world_build_binary.py
-          
-      - name: Generate micro-speech ipynb
+
+      - name: Generate micro_speech ipynb
         run: |
-          cd examples/micro-speech
+          cd examples/micro_speech
           cp micro_speech.py micro_speech_build_binary.py
           sed -i 's/$NOTEBOOK/micro_speech/g' micro_speech.py
           sed -i 's/$NOTEBOOK/micro_speech_build_binary/g' micro_speech_build_binary.py
