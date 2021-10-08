@@ -3,13 +3,13 @@
 ![Renode](https://dl.antmicro.com/projects/renode/renode.png)
 <table align="left">
   <td>
-    <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/hello-world/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-in-colab.png" />Run in Google Colab</a>
+    <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/hello_world/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-in-colab.png" />Run in Google Colab</a>
   </td>
   <td>
-    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/hello-world/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-ipynb.png" />View ipynb on GitHub</a>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/hello_world/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-ipynb.png" />View ipynb on GitHub</a>
   </td>
   <td>
-    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/hello-world/hello_world.py"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-source.png" />View Python source on GitHub</a>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/hello_world/hello_world.py"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-source.png" />View Python source on GitHub</a>
   </td>
 </table>
 """
@@ -33,7 +33,7 @@ os.environ['TENSORFLOW_PATH'] = os.getcwd()+"/tensorflow-arduino-examples/tensor
 !mkdir -p binaries/hello_world && cd binaries/hello_world && wget https://github.com/antmicro/tensorflow-arduino-examples-binaries/raw/master/hello_world/hello_world.ino.elf # fetch prebuilt binaries
 
 # %% [markdown]
-"""## Run the hello-world example in Renode"""
+"""## Run the hello_world example in Renode"""
 
 # %%
 import time

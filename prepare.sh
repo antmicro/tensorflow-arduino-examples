@@ -2,9 +2,9 @@ set -x
 git submodule update --init
 curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 bin/arduino-cli core install arduino:mbed
-# Required by magic-wand example
+# Required by magic_wand example
 bin/arduino-cli lib install Arduino_LSM9DS1@1.1.0
-# Required by person-detection example
+# Required by person_detection example
 bin/arduino-cli lib install JPEGDecoder@1.8.0
 git clone --quiet https://github.com/ArduCAM/Arduino.git
 # Make sure no hardware platform is selected

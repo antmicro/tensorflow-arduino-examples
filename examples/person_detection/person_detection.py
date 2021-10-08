@@ -3,13 +3,13 @@
 ![Renode](https://dl.antmicro.com/projects/renode/renode.png)
 <table align="left">
   <td>
-    <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/person-detection/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-in-colab.png" />Run in Google Colab</a>
+    <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/person_detection/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-in-colab.png" />Run in Google Colab</a>
   </td>
   <td>
-    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/person-detection/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-ipynb.png" />View ipynb on GitHub</a>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/person_detection/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-ipynb.png" />View ipynb on GitHub</a>
   </td>
   <td>
-    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/person-detection/person_detection.py"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-source.png" />View Python source on GitHub</a>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/person_detection/person_detection.py"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-source.png" />View Python source on GitHub</a>
   </td>
 </table>
 """
@@ -53,7 +53,7 @@ photo.save('photo.jpg')
 display(Image('photo.jpg'))
 
 # %% [markdown]
-"""## Run a person-detection example with a captured photo in Renode"""
+"""## Run a person_detection example with a captured photo in Renode"""
 
 # %%
 import time

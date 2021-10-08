@@ -3,13 +3,13 @@
 ![Renode](https://dl.antmicro.com/projects/renode/renode.png)
 <table align="left">
   <td>
-    <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/magic-wand/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-in-colab.png" />Run in Google Colab</a>
+    <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/magic_wand/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-in-colab.png" />Run in Google Colab</a>
   </td>
   <td>
-    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/magic-wand/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-ipynb.png" />View ipynb on GitHub</a>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/magic_wand/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-ipynb.png" />View ipynb on GitHub</a>
   </td>
   <td>
-    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/magic-wand/magic_wand.py"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-source.png" />View Python source on GitHub</a>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/magic_wand/magic_wand.py"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-source.png" />View Python source on GitHub</a>
   </td>
 </table>
 """
@@ -34,7 +34,7 @@ os.environ['TENSORFLOW_PATH'] = os.getcwd()+"/tensorflow-arduino-examples/tensor
 !mkdir -p binaries/magic_wand && cd binaries/magic_wand && wget https://github.com/antmicro/tensorflow-arduino-examples-binaries/raw/master/magic_wand/magic_wand.ino.elf # fetch prebuilt binaries
 
 # %% [markdown]
-"""## Run a magic-wand example in Renode"""
+"""## Run a magic_wand example in Renode"""
 
 # %%
 import time
@@ -49,7 +49,7 @@ tell_renode('sysbus LoadELF @binaries/magic_wand/magic_wand.ino.elf')
 tell_renode('uart0 CreateFileBackend @uart.dump true')
 tell_renode('logLevel 3')
 tell_renode('machine EnableProfiler "metrics.dump"')
-tell_renode('sysbus.twi0.lsm9ds1_imu FeedAccelerationSample @tensorflow-arduino-examples/examples/magic-wand/angle_rotated.data')
+tell_renode('sysbus.twi0.lsm9ds1_imu FeedAccelerationSample @tensorflow-arduino-examples/examples/magic_wand/angle_rotated.data')
 tell_renode('s')
 time.sleep(5) #waits for creating uart.dump
 !timeout 60 tail -c+2 -f renode/uart.dump | sed '/\* \* \* \* \* \* \* \*/ q'
