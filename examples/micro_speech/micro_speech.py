@@ -3,13 +3,13 @@
 ![Renode](https://dl.antmicro.com/projects/renode/renode.png)
 <table align="left">
   <td>
-    <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/micro-speech/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-in-colab.png" />Run in Google Colab</a>
+    <a target="_blank" href="https://colab.research.google.com/github/antmicro/tensorflow-arduino-examples/blob/master/examples/micro_speech/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-in-colab.png" />Run in Google Colab</a>
   </td>
   <td>
-    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/micro-speech/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-ipynb.png" />View ipynb on GitHub</a>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/micro_speech/$NOTEBOOK.ipynb"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-ipynb.png" />View ipynb on GitHub</a>
   </td>
   <td>
-    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/micro-speech/micro_speech.py"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-source.png" />View Python source on GitHub</a>
+    <a target="_blank" href="https://github.com/antmicro/tensorflow-arduino-examples/blob/master/examples/micro_speech/micro_speech.py"><img src="https://raw.githubusercontent.com/antmicro/tensorflow-arduino-examples/master/examples/.static/view-source.png" />View Python source on GitHub</a>
   </td>
 </table>
 """
@@ -42,7 +42,7 @@ audio.audio_options()
 
 # %% [markdown]
 """
-## Run a micro-speech example in Renode
+## Run a micro_speech example in Renode
 The command may not be recognized correctly due to https://github.com/tensorflow/tensorflow/pull/45878
 """
 # %%
